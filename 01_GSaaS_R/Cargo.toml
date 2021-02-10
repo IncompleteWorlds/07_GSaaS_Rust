@@ -1,0 +1,53 @@
+[package]
+name = "gsaas"
+version = "0.1.0"
+authors = ["Alberto Fernandez Garcia (External) <ajfg70@wanadoo.fr>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+log = "0.4.0"
+log4rs = "0.10.0"
+
+# JSON Web Toolkit
+#jwt = "0.4.0"
+
+# Nanomsg
+nng = "1.0.0-rc.2"
+
+# SQLite
+#rusqlite = "0.21.0"
+
+# Date & Time
+chrono="0.4"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
+serde_json = "1.0"
+serde_derive = "1.0"
+
+# HTTP Server
+# Actix
+actix-web = "2.0"
+actix-rt = "1.0"
+# Required for serving static web pages (files)
+actix-files = "0.2.1"
+#actix-service = "1.0.5"
+futures = "0.3"
+
+uuid = "0.8.1"
+
+# ORM, pool of connections
+#diesel = "1.4.3"
+#diesel = { version = "1.0.0", features = ["postgres  sqlite"] }
+
+# Avro
+# avro-rs = "0.6.6"
+
+# Tokio
+tokio = { version = "0.2", features = ["full"] }
+
+# Bit stream processing
+bitstream-io = "0.8.5"

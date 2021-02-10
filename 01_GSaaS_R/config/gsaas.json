@@ -1,0 +1,29 @@
+
+{
+    "documentation":                "Incomplete Worlds (c) 2020. GS as a Service configuration file",
+
+    "version":                      "1.0alfa",
+
+    "config_log_filename":          "config/log4rs.yaml",
+
+    "gsaas_http_address":          "127.0.0.1:12005",
+
+    "decoder_nng_push_address":    "tcp://127.0.0.1:11006",
+
+    "gs_input_address":             "tcp://127.0.0.1:20021",
+    
+    "gs_output_address":            "tcp://127.0.0.1:20022",
+
+    "type_of_frame":                "fixed_marker",
+    "fixed_length":                 1175,
+    "marker_start":                 "0x1234",
+    "marker_end":                   "0x34343",
+    "max_buffer_size":              65536,
+
+    "layers" :  [
+        { "index": 0,   "name": "cortex_layer" },
+        { "index": 1,   "name": "nis_layer" },
+        { "index": 2,   "name": "ccsds_cltu_layer" }
+    ]
+}
+
