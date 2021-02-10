@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "01_GSaaS_R"
+		},
+		{
+			"path": "02_FDSaaS_R"
+		},
+		{
+			"path": "03_TM_Decoder"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true,
+		"workbench.preferredDarkColorTheme": "Visual Studio Light",
+		"window.autoDetectColorScheme": true
+	}
+}

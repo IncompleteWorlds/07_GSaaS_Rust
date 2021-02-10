@@ -1,0 +1,9 @@
+mission_id, mission name
+satellite_id, satellite_id_1
+reference_frame, EarthMJ2000Eq
+epoch_format, UTCGregorian
+ephemeris, 2
+        
+2020-05-15T11:30:00.000, 0.0,  1.0,  2.0,  0.0,  1.0,  2.0
+2020-05-15T11:30:05.000, 0.01, 1.02, 2.03, 0.01, 1.02, 2.03
+

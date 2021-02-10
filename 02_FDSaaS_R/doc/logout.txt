@@ -1,0 +1,19 @@
+
+Example:
+Request: GET http://hostname/api/logout
+Body
+{
+    "version":             "1.0", 
+    "msg_code_id":         "logout", 
+    "authentication_key":  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmZHNhYXMiLCJzdWIiOiJEZW1vIiwiZXhwIjoxNjA5MTgxNTI0LCJpZCI6IjQ0NTIwYjEzLTVkYjktNGM4Ni1hNWFjLWVhNzI1MzNmOGFlZSJ9.I7JFn-eJTxu6MnmNVl7T_mQLBEV_Ca1d9eczCxdx3Bs", 
+    "msg_id":              "003", 
+    "timestamp":           0, 
+}
+
+
+Response:
+{
+    "msg_id" :             "003s",
+    "error"   :            null
+}
+

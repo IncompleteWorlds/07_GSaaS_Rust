@@ -1,0 +1,10 @@
+{
+    "version" :             "1.0",
+    "msg_code_id" :         "exit",
+    "authentication_key" :  "00998844",
+    "user_id" :             "none",
+    "msg_id" :              "999",
+    "timestamp" :           0,
+    
+    "exit_code":            "XYZZY"
+}

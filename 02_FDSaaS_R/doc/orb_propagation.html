@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 6.4.5.2 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2020-08-25T23:48:43.604750113"/>
+	<meta name="created" content="00:00:00">
+	<style type="text/css">
+		@page { size: 21cm 29.7cm; margin: 2cm }
+		p { margin-bottom: 0.25cm; line-height: 115%; background: transparent }
+		pre { background: transparent }
+		pre.western { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		pre.cjk { font-family: "Noto Sans Mono CJK SC", monospace; font-size: 10pt }
+		pre.ctl { font-family: "Liberation Mono", monospace; font-size: 10pt }
+		a:link { color: #000080; so-language: zxx; text-decoration: underline }
+		a:visited { color: #800000; so-language: zxx; text-decoration: underline }
+	</style>
+</head>
+<body lang="en-GB" link="#000080" vlink="#800000" dir="ltr"><pre class="western"><font face="NanumSquare"><font size="4" style="font-size: 16pt"><b>FDS as a Service, (c) Incomplete Worlds 2020</b></font></font>
+----------------------------------------------------------------
+
+<font size="4" style="font-size: 15pt"><b>Propagate a satellite orbit</b></font>
+
+<font size="4" style="font-size: 14pt">Send a JSON object to the address  <font color="#0d1f63"><i>http://hostname/api/orb_propagation</i></font> using GET HTTP method.</font>
+<font size="4" style="font-size: 14pt">The server will propagate the orbit for that satellite and return the list of ephemeris</font>
+
+<font size="4" style="font-size: 14pt">The fields of JSON object are:</font>
+<font size="4" style="font-size: 14pt">- <b>msg_code_id</b>. Fix value &quot;<font color="#0d1f63"><i>orb_propagation</i></font>&quot;. It shall be identical to the API name</font>
+<font size="4" style="font-size: 14pt">- <b>authentication_key</b>. Insert authentication key returned by <font color="#0d1f63"><i>register</i></font> API call</font>
+<font size="4" style="font-size: 14pt">- <b>user_id</b>. Value returned by either Login or Register API calls</font>
+<font size="4" style="font-size: 14pt">- <b>mission_id</b>. Mission name</font>
+<font size="4" style="font-size: 14pt">- <b>satellite_id</b>. Satellite identifier</font>
+<font size="4" style="font-size: 14pt">- add_to_database. This flag indicates if the output data shall be added to the satellite database or not. </font>
+  <font size="4" style="font-size: 14pt">Allowed values: true, false</font>
+  <font size="4" style="font-size: 14pt">Default value: </font><font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>false</i></font></font>
+<font size="4" style="font-size: 14pt">- <b>epoch_format</b>. Date format</font>
+  <font size="4" style="font-size: 14pt">Allowed values: UTCGregorian UTCModJulian, TAIGregorian, TAIModJulian</font>
+  <font size="4" style="font-size: 14pt">Default value: </font><font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>UTCGregorian</i></font></font>
+  <font size="4" style="font-size: 14pt">I.e. Epoch in UTCGregorian &quot;</font><font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>01 Jan 2000 11:59:28.000</i></font></font><font size="4" style="font-size: 14pt">&quot; or &quot;</font><font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>2000-01-01T11:59:28.000</i></font></font><font size="4" style="font-size: 14pt">&quot;</font>
+  <font size="4" style="font-size: 14pt">Epoch in UTCModJulian &quot;</font><font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>21544.99962962963</i></font></font><font size="4" style="font-size: 14pt">&quot;</font>
+
+  <font size="4" style="font-size: 14pt">Modified Julian Date;  MJD = JD - offset</font>
+  <font size="4" style="font-size: 14pt">Reference epoch = 05 Jan 1941 12:00:00.000</font>
+  <font size="4" style="font-size: 14pt">Modified Julian offset = 2430000.0 </font>
+
+<font size="4" style="font-size: 14pt">- <b>start_time</b>. Start time of the Orbit propagation. The format shall be aligned with 'epoch_format'</font>
+  <font size="4" style="font-size: 14pt">I.e. UTCGregorian: &quot;</font><font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>15 Jun 2020 12:00:00.000</i></font></font><font size="4" style="font-size: 14pt">&quot;,</font>
+<font size="4" style="font-size: 14pt">- <b>stop_time</b>. Start time of the Orbit propagation. The format shall be aligned with 'epoch_format'</font>
+<font size="4" style="font-size: 14pt">- <b>step_size</b>. Number of seconds (Step) between two consecutives ephemeris</font>
+  <font size="4" style="font-size: 14pt">Default value: 30</font>
+<font size="4" style="font-size: 14pt">- <b>initial_position</b>. Initial positon vector of the satellite. Array of three real values (px, py, pz).</font>
+  <font size="4" style="font-size: 14pt">In km</font>
+  <font size="4" style="font-size: 14pt">I.e. </font><font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>[ 0.0, 1.0, 2.0 ]</i></font></font>
+<font size="4" style="font-size: 14pt">- <b>initial_velocity</b>. Initial velocity vector of the satellite. Array of three real values (vx, vy, vz).</font>
+  <font size="4" style="font-size: 14pt">In km/s</font>
+  <font size="4" style="font-size: 14pt">I.e. [ </font><font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>0.0, 1.0, 2.0 </i></font></font><font size="4" style="font-size: 14pt">]</font>
+<font size="4" style="font-size: 14pt">- <b>input</b>. Set of input parameters. It is composed of two parts; the orbital parameters and the propagator</font>
+  <font size="4" style="font-size: 14pt">parameters. The first one describes the orbit of the satellite in terms of its Keplerian elements. Whilst the second one describes the parameters of the propagator and its type.</font>
+
+    <font size="4" style="font-size: 14pt">In case of using the Keplerian elements, the required fields are:</font>
+
+    <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>orbital_parameters</b></font><font size="4" style="font-size: 14pt">. Set of orbital parameters. It shall include:</font>
+        <font size="4" style="font-size: 14pt">* </font><font size="4" style="font-size: 14pt"><b>date_time</b></font><font size="4" style="font-size: 14pt">. Initial date of time. String</font>
+        <font size="4" style="font-size: 14pt">* </font><font size="4" style="font-size: 14pt"><b>eci_frame</b></font><font size="4" style="font-size: 14pt">. The coordinates system</font>
+          <font size="4" style="font-size: 14pt">Allowed values; EME2000,  EarthMJ2000Eq and EarthFixed</font>
+        <font size="4" style="font-size: 14pt">* </font><font size="4" style="font-size: 14pt"><b>keplerian</b></font><font size="4" style="font-size: 14pt">. The Keplerian elements. It shall include:</font>
+            <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>sma</b></font><font size="4" style="font-size: 14pt">. The semi-major axis expressed in the coordinate system chosen in the ECI frame field. </font>
+            <font size="4" style="font-size: 14pt">Real value, kilometers.</font>
+            <font size="4" style="font-size: 14pt">Allowed values; sma &lt; -0.001 meter or SMA &gt; 0.001 meter</font>
+                            <font size="4" style="font-size: 14pt">If sma &lt; 0, then ecc must be &gt; 1</font>
+            <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>ecc</b></font><font size="4" style="font-size: 14pt">. The eccentricity expressed in the coordinate system chosen in the ECI frame field. </font>
+            <font size="4" style="font-size: 14pt">Real value</font>
+                <font size="4" style="font-size: 14pt">Allowed values; ecc &lt; 0.9999999 or ecc &gt; 1.0000001</font>
+                                <font size="4" style="font-size: 14pt">If ecc &gt; 1 then sma must be &lt; 0</font>
+            <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>inc</b></font><font size="4" style="font-size: 14pt">. Inclination in degrees. Real value</font>
+                <font size="4" style="font-size: 14pt">Allowed Values; 0 &lt;= i &lt;= 180</font>
+            <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>raan</b></font><font size="4" style="font-size: 14pt">. The right ascension of the ascending node expressed in the coordinate system chosen </font>
+            <font size="4" style="font-size: 14pt">in the ECI frame field. Real value, degrees.</font>
+            <font size="4" style="font-size: 14pt">Allowed values; -INF &lt; raan &lt; INF</font>
+            <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>aop</b></font><font size="4" style="font-size: 14pt">: The argument of periapsis expressed in the coordinate system chosen in the ECI frame field.</font>
+            <font size="4" style="font-size: 14pt">Real value, degrees.</font>
+            <font size="4" style="font-size: 14pt">Allowed values; -INF &lt; aop &lt; INF</font>
+            <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>ta</b></font><font size="4" style="font-size: 14pt">: The true anomaly expressed in the coordinate system chosen in the ECI frame field.</font>
+            <font size="4" style="font-size: 14pt">Real value, degrees.</font>
+            <font size="4" style="font-size: 14pt">Allowed values; -INF &lt; ta &lt; INF</font>
+            <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>pos_angle</b></font><font size="4" style="font-size: 14pt">. Flag. TBD</font>
+            <font size="4" style="font-size: 14pt">Allowed values; true, false</font>
+          
+    <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>propagator parameter</b></font><font size="4" style="font-size: 14pt">. It contains the Force model and a set of propagator parameters.</font>
+        <font size="4" style="font-size: 14pt">* </font><font size="4" style="font-size: 14pt"><b>force_model</b></font><font size="4" style="font-size: 14pt">. </font>
+            <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>central_body</b></font><font size="4" style="font-size: 14pt">. The central body of propagation. The Central Body must be a celestial body and </font>
+              <font size="4" style="font-size: 14pt">cannot be a Libration Point, Bary center, Spacecraft, or other special point.</font>
+              <font size="4" style="font-size: 14pt">Allowed values; Earth</font>
+          
+<font size="4" style="font-size: 14pt">- <b>output</b>. It describes how the output will ge generated and the output format</font>
+    <font size="4" style="font-size: 14pt">- </font><font size="4" style="font-size: 14pt"><b>output_frame</b></font><font size="4" style="font-size: 14pt">. It shall include:</font>
+        <font size="4" style="font-size: 14pt">* </font><font size="4" style="font-size: 14pt"><b>reference_frame</b></font><font size="4" style="font-size: 14pt">. Reference frame in which output values are expressed.</font>
+          <font size="4" style="font-size: 14pt">Allowed values; EarthMJ2000Eq, EarthMJ2000Ec, EarthFixed, EarthICRF</font>
+        <font size="4" style="font-size: 14pt">* </font><font size="4" style="font-size: 14pt"><b>file_format</b></font><font size="4" style="font-size: 14pt">. Output data format.</font>
+          <font size="4" style="font-size: 14pt">Allowed values; CSV, JSON, CCSDS-OEM </font>
+        <font size="4" style="font-size: 14pt">* </font><font size="4" style="font-size: 14pt"><b>output_file_name</b></font><font size="4" style="font-size: 14pt">. Not used - TBD</font>
+        <font size="4" style="font-size: 14pt">* </font><font size="4" style="font-size: 14pt"><b>interpolation_order</b></font><font size="4" style="font-size: 14pt">. It sets the interpolation order for the Lagrange interpolator</font>
+          <font size="4" style="font-size: 14pt">Integer</font>
+          <font size="4" style="font-size: 14pt">Allowed Values; 1 &lt;= interpolation order &lt;= 10</font>
+        
+<font size="4" style="font-size: 14pt">On success, it wil return list of points (ephemeris) in the selected output format. See file_format field.</font>
+<font size="4" style="font-size: 14pt">If it fails, it will return a JSON object describing the error.</font>
+
+<font size="4" style="font-size: 14pt">CSV</font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>mission_id, mission name</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>satellite_id, satellite_id_1</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>reference_frame, EarthMJ2000Eq</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>epoch_format, UTCGregorian</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>ephemeris, 2</i></font></font>
+<font color="#0d1f63">        </font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>2020-05-15T11:30:00.000, 0.0,  1.0,  2.0,  0.0,  1.0,  2.0</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>2020-05-15T11:30:05.000, 0.01, 1.02, 2.03, 0.01, 1.02, 2.03</i></font></font>
+
+
+<font size="4" style="font-size: 14pt">JSON</font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>{</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;mission_id&quot;        : &quot;mission name&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;satellite_id&quot;      : &quot;satellite_id_1&quot;,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;reference_frame&quot;   : &quot;EarthMJ2000Eq&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;epoch_format&quot;      : &quot;UTCGregorian&quot;,</i></font></font>
+<font color="#0d1f63">    </font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;ephemeris&quot; :  [</i></font></font>
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>{</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;time&quot;      : &quot;2020-05-15T11:30:00.000&quot;,</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;position&quot;  : [  0.0, 1.0, 2.0 ],</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;velocity&quot;  : [  0.0, 1.0, 2.0 ]</i></font></font>
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>},</i></font></font>
+
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>{</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;time&quot;      : &quot;2020-05-15T11:30:05.000&quot;,</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;position&quot;  : [  0.01, 1.02, 2.03 ],</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;velocity&quot;  : [  0.01, 1.02, 2.03 ]</i></font></font>
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>}</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>] </i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>}</i></font></font>
+
+<font size="4" style="font-size: 14pt">CCSDS-OEM</font>
+
+<font size="4" style="font-size: 14pt">The standard CCSDS OEM format. See CCSDSstandard for further details.</font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>CCSDS_OEM_VERS = 2.0</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>CREATION_DATE = 2019-08-02T03:04:05.123456</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>ORIGINATOR = LEOLABS</i></font></font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>META_START</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>OBJECT_NAME = EXAMPLE SAT 1</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>OBJECT_ID = L999999</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>CENTER_NAME = EARTH</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>REF_FRAME = EME2000</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>TIME_SYSTEM = UTC</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>START_TIME = 2019-03-18T00:00:00</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>USEABLE_START_TIME = 2019-03-18T00:00:00</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>USEABLE_STOP_TIME = 2019-03-19T00:00:00</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>STOP_TIME = 2019-03-19T00:00:00Z</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>INTERPOLATION = LAGRANGE</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>INTERPOLATION_DEGREE = 7</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>META_STOP</i></font></font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>2019-03-18T00:00:00 -1.898076e+06 -6.216728e+06 2.960030e+06 -2.023501e+03 -2.589406e+03 -6.711289e+03</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>...</i></font></font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>COVARIANCE_START</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>EPOCH = 2019-03-18T00:00:00</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>COV_REF_FRAME = EME2000</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>4.31661235e+03</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>-1.47401855e+03 9.56942996e+02</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>-4.66631183e+02 1.03895014e+03 2.00120455e+03</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>1.20240463e+00 -7.73289709e-01 -8.91178565e-01 7.16431890e-04</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>-7.22705016e-01 -6.29054148e-01 -1.82716096e+00 5.40286462e-04 2.06419602e-03</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>-1.47749402e-01 4.69618107e-01 1.04863201e+00 -4.48718604e-04 -9.97646457e-04 6.06341102e-04</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>...</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>COVARIANCE_STOP</i></font></font>
+
+
+<font size="4" style="font-size: 14pt">Usage:</font>
+<font size="4" style="font-size: 14pt">Send GET to <font color="#0d1f63"><i>/api/orb_propagation/usage</i></font></font>
+
+
+<font size="4" style="font-size: 14pt">Example:</font>
+
+<font size="4" style="font-size: 14pt">Request: <font color="#0d1f63">GET http://hostname/api/orb_propagation</font></font>
+<font size="4" style="font-size: 14pt">Body</font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>{</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;msg_code_id&quot;        : &quot;orb_propagation&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;authentication_key&quot; : &quot;00998844&quot;,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;user_id&quot;            : &quot;xxx_yyy_1112&quot;,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;mission_id&quot;         : &quot;mis1&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;satellite_id&quot;       : &quot;sat1&quot;,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;add_to_database&quot;    : &quot;false&quot;,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;epoch_format&quot;       : &quot;UTCGregorian&quot;,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;start_time&quot;         : &quot;15 Jun 2020 12:00:00.000&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;stop_time&quot;          : &quot;16 Jun 2020 12:00:00.000&quot;,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;step_size&quot;          : 30,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;initial_position&quot;   : [  0.0, 1.0, 2.0 ],</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;initial_velocity&quot;   : [  0.0, 1.0, 2.0 ],</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;input&quot; : {</i></font></font>
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>&quot;orbital_parameters&quot; : {</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;date_time&quot;      : &quot;2020-06-15T11:30:00.000&quot;,</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;eci_frame&quot;      : &quot;EME2000&quot;,</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;keplerian&quot;      : {</i></font></font>
+<font color="#0d1f63">                <font size="4" style="font-size: 14pt"><i>&quot;sma&quot;        : 123145,</i></font></font>
+<font color="#0d1f63">                <font size="4" style="font-size: 14pt"><i>&quot;ecc&quot;        : 0.123,</i></font></font>
+<font color="#0d1f63">                <font size="4" style="font-size: 14pt"><i>&quot;inc&quot;        : 0.123,</i></font></font>
+<font color="#0d1f63">                <font size="4" style="font-size: 14pt"><i>&quot;raan&quot;       : 0.123,</i></font></font>
+<font color="#0d1f63">                <font size="4" style="font-size: 14pt"><i>&quot;aop&quot;        : 0.123,</i></font></font>
+<font color="#0d1f63">                <font size="4" style="font-size: 14pt"><i>&quot;ta&quot;         : 1.234,</i></font></font>
+<font color="#0d1f63">                <font size="4" style="font-size: 14pt"><i>&quot;pos_angle&quot;  : &quot;true, false&quot;</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>}</i></font></font>
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>},</i></font></font>
+
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>&quot;propagator_parameter&quot;   : {</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;force_model&quot;   : {</i></font></font>
+<font color="#0d1f63">                <font size="4" style="font-size: 14pt"><i>&quot;central_body&quot;   : &quot;Earth&quot;</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>},</i></font></font>
+<font color="#0d1f63">    </font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;parameter1&quot;    : &quot;value1&quot;,</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;parameter2&quot;    : &quot;value2&quot;</i></font></font>
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>}</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>},</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;output&quot; : {</i></font></font>
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>&quot;output_frame&quot; : {</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;reference_frame&quot; : &quot;EarthMJ2000Eq&quot;,</i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;file_format&quot;     : &quot;CCSDS-OEM&quot;, </i></font></font>
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;output_file_name&quot; : &quot;example_orb_propag.oem&quot;,</i></font></font>
+
+<font color="#0d1f63">            <font size="4" style="font-size: 14pt"><i>&quot;interpolation_order&quot; : 7</i></font></font>
+<font color="#0d1f63">        <font size="4" style="font-size: 14pt"><i>}</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>}</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>}</i></font></font>
+
+
+<font size="4" style="font-size: 14pt">Output:</font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>CCSDS_OEM_VERS = 1.0</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>CREATION_DATE  = 2020-07-28T17:33:08</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>ORIGINATOR     = GMAT USER</i></font></font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>META_START</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>OBJECT_NAME          = SC_mis1_sat1</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>OBJECT_ID            = sat1</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>CENTER_NAME          = Earth</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>REF_FRAME            = EME2000</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>TIME_SYSTEM          = UTC</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>START_TIME           = 2020-06-15T12:00:00.000</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>USEABLE_START_TIME   = 2020-06-15T12:00:00.000</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>USEABLE_STOP_TIME    = 2020-06-15T14:24:00.000</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>STOP_TIME            = 2020-06-15T14:24:00.000</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>INTERPOLATION        = Lagrange</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>INTERPOLATION_DEGREE = 7 </i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>META_STOP</i></font></font>
+
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>2020-06-15T12:00:00.000   7.100000000000000e+03   0.000000000000000e+00   1.300000000000000e+03   0.000000000000000e+00   7.350000000000000e+00   1.000000000000000e+00</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>2020-06-15T12:01:00.000   7.086464340502823e+03   4.407199483006634e+02   1.357476968346048e+03  -4.507091140198888e-01   7.336009303976716e+00   9.153521332657446e-01</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>2020-06-15T12:03:08.777   6.966807734122242e+03   1.378844648584322e+03   1.463144252221835e+03  -1.403466089369499e+00   7.212752019900155e+00   7.236426884495003e-01</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>2020-06-15T12:05:25.032   6.708835149021545e+03   2.345119229330543e+03   1.547242659390014e+03  -2.375559313674435e+00   6.948161263377198e+00   5.091239646094480e-01</i></font></font>
+
+
+
+</pre>
+</body>
+</html>

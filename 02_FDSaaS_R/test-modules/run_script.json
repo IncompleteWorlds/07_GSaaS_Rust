@@ -1,0 +1,31 @@
+{
+    "version"            : "1.0",
+    "msg_code_id"        : "run_script",
+    "authentication_key" : "00998844",
+    "msg_id"             : "999",
+    "timestamp"          : 0,
+    
+    "output_file_name"   : "aReport.txt",
+    "script_text"        : "\n
+    Create ReportFile aReport; \n
+
+    Create String aStr;   \n
+    aStr = 'MyString';   \n
+
+    Create ChemicalTank ChemicalTank1;  \n
+    Create Spacecraft Sat;    \n
+    Create String myString1 myString2;   \n
+    Create Variable myVar;    \n
+    Create Array myArray[2,2];    \n
+    
+    myVar        = 3.1415;   \n
+    myString1    = 'This is my string';   \n
+    myArray(1,1) = 1;    \n
+    myArray(2,2) = 1;    \n
+    
+    BeginMissionSequence;   \n
+     
+    Write ChemicalTank1 {Style =  Script, ReportFile = aReport}  \n
+
+    "
+}

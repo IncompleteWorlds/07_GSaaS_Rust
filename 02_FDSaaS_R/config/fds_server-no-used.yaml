@@ -1,0 +1,9 @@
+#
+# Incomplete Worlds (c) 2020
+#
+# FDS Server configuration file
+#
+
+fds_nng_req_address: 127.0.0.1
+fds_nng_req_port: 11006
+
