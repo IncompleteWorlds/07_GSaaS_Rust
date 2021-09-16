@@ -1,0 +1,13 @@
+
+{
+    "documentation":                "Incomplete Worlds (c) 2021. Tools configuration file",
+
+    "version":                      "1.0alfa",
+
+    "config_log_filename":          "config/log4rs.yaml",
+
+    "secret_key":                   "Zyw967%WdfX*X*aZ0$9q",
+
+    "tools_http_address":           "127.0.0.1:9000"
+}
+

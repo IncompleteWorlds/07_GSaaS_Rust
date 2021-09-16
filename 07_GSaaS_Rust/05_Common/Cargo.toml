@@ -1,0 +1,37 @@
+[package]
+name = "common"
+version = "0.1.0"
+authors = ["Alberto Fernandez - Incomplete Worlds"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+log = "0.4.0"
+log4rs = "0.10.0"
+
+# Format
+derive_more = "0.99"
+
+# Date & Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# JSON Web Toolkit
+jsonwebtoken = "7"
+
+# HTTP Server
+# Actix. Http codes
+actix-web = "3"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
+serde_json = "1.0"
+serde_derive = "1.0"
+
+# UUID
+uuid = { version = "0.8", features = ["serde", "v4"] }
+
+# ORM, pool of connections
+diesel = { version = "1.4", features = ["chrono", "sqlite", "r2d2", "uuidv07", "serde_json"] }
+

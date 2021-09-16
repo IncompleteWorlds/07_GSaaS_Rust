@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "01_GSaaS_R"
+		},
+		{
+			"path": "02_FDSaaS_R"
+		},
+		{
+			"path": "04_Tools"
+		},
+		{
+			"path": "05_Common"
+		},
+		{
+			"path": "06_OrbPropag_TLE"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true,
+		"workbench.preferredDarkColorTheme": "Visual Studio Light",
+		"window.autoDetectColorScheme": true
+	}
+}

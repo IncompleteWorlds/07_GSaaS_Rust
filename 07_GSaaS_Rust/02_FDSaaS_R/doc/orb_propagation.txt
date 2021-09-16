@@ -1,0 +1,266 @@
+FDS as a Service, (c) Incomplete Worlds 2020
+----------------------------------------------------------------
+
+Propagate a satellite orbit
+
+Send a JSON object to the address  http://hostname/api/orb_propagation using GET HTTP method.
+The server will propagate the orbit for that satellite and return the list of ephemeris
+
+The fields of JSON object are:
+
+- version. Fix value "1.0"
+- msg_code_id. Fix value "OrbPropagationMessage". It shall be identical to the API name
+- authentication_key. Leave it empty
+- user_id. Value returned by either Login or Register API calls
+- msg_id. Unique identifier of the message. It will help to correlate the response with the answer
+- mission_id. Mission name
+- satellite_id. Satellite identifier
+- add_to_database. This flag indicates if the output data shall be added to the satellite database or not. 
+  Allowed values: true, false
+  Default value: false
+- epoch_format. Date format
+  Allowed values: UTCGregorian UTCModJulian, TAIGregorian, TAIModJulian
+  Default value: UTCGregorian
+  I.e. Epoch in UTCGregorian "01 Jan 2000 11:59:28.000" or ""2000-01-01T11:59:28.000"
+  Epoch in UTCModJulian "21544.99962962963"
+
+  Modified Julian Date;  MJD = JD - offset
+  Reference epoch = 05 Jan 1941 12:00:00.000
+  Modified Julian offset = 2430000.0 
+
+- start_time. Start time of the Orbit propagation. The format shall be aligned with 'epoch_format'
+  I.e. UTCGregorian: "15 Jun 2020 12:00:00.000",
+- stop_time. Start time of the Orbit propagation. The format shall be aligned with 'epoch_format'
+- step_size. Number of seconds (Step) between two consecutives ephemeris
+  Default value: 30
+- initial_position. Initial positon vector of the satellite. Array of three real values (px, py, pz).
+  In km
+  I.e. [  0.0, 1.0, 2.0 ]
+- initial_velocity. Initial velocity vector of the satellite. Array of three real values (vx, vy, vz).
+  In km/s
+  I.e. [  0.0, 1.0, 2.0 ]
+- input. Set of input parameters. It is composed of two parts; the orbital parameters and the propagator
+  parameters. The first one describes the orbit of the satellite in terms of its Keplerian elements. 
+  Whilst the second one describes the parameters of the propagator and its type.
+
+    In case of using the Keplerian elements, the required fields are:
+
+    - orbital_parameters. Set of orbital parameters. It shall include:
+        * date_time. Initial date of time. String
+        * eci_frame. The coordinates system
+          Allowed values; EME2000",  EarthMJ2000Eq and EarthFixed
+        * keplerian. The Keplerian elements. It shall include:
+            - sma. The semi-major axis expressed in the coordinate system chosen in the ECI frame field. 
+            Real value, kilometers.
+            Allowed values; sma < -0.001 meter or SMA > 0.001 meter
+                            If sma < 0, then ecc must be > 1
+            - ecc. The eccentricity expressed in the coordinate system chosen in the ECI frame field. 
+            Real value
+                Allowed values; ecc < 0.9999999 or ecc > 1.0000001
+                                If ecc > 1 then sma must be < 0
+            - inc. Inclination in degrees. Real value
+                Allowed Values; 0 <= i <= 180
+            - raan. The right ascension of the ascending node expressed in the coordinate system chosen 
+            in the ECI frame field. Real value, degrees.
+            Allowed values; -INF < raan < INF
+            - aop: The argument of periapsis expressed in the coordinate system chosen in the ECI frame field.
+            Real value, degrees.
+            Allowed values; -INF < aop < INF
+            - ta: The true anomaly expressed in the coordinate system chosen in the ECI frame field.
+            Real value, degrees.
+            Allowed values; -INF < ta < INF
+            - pos_angle. Flag. TBD
+            Allowed values; true, false
+
+    - propagator parameter. It contains the Force model and a set of propagator parameters.
+        * force_model. 
+            - central_body. The central body of propagation. The Central Body must be a celestial body and 
+              cannot be a Libration Point, Bary center, Spacecraft, or other special point.
+              Allowed values; Earth
+          
+- output. It describes how the output will ge generated and the output format
+    - output_frame. It shall include:
+        * reference_frame. Reference frame in which output values are expressed.
+          Allowed values; EarthMJ2000Eq, EarthMJ2000Ec, EarthFixed, EarthICRF
+        * output_format. Output data format.
+          Allowed values; CSV, JSON, CCSDS-OEM 
+        * output_file_name. Not used - TBD
+        * interpolation_order. It sets the interpolation order for the Lagrange interpolator
+          Integer
+          Allowed Values; 1 <= interpolation order <= 10
+        
+On success, it wil return list of points (ephemeris) in the selected output format. See output_format field.
+If it fails, it will return a JSON object describing the error.
+
+CSV
+
+mission_id, mission name
+satellite_id, satellite_id_1
+reference_frame, EarthMJ2000Eq
+epoch_format, UTCGregorian
+ephemeris, 2
+        
+2020-05-15T11:30:00.000, 0.0,  1.0,  2.0,  0.0,  1.0,  2.0
+2020-05-15T11:30:05.000, 0.01, 1.02, 2.03, 0.01, 1.02, 2.03
+
+
+JSON
+
+{
+    
+    "version"            :  "1.0",
+    "msg_code_id"        :  "OrbPropagationMessage",
+    "authentication_key" :  "zzzzz",
+    "user_id"            :  "xxxx",
+    "msg_id"             :  "0001",
+    "timestamp"          :  "12345678",
+
+    "mission_id"        : "mission name",
+    "satellite_id"      : "satellite_id_1",
+
+    "reference_frame"   : "EarthMJ2000Eq",
+    "epoch_format"      : "UTCGregorian",
+    
+    "ephemeris" :  [
+        {
+            "time"      : "2020-05-15T11:30:00.000",
+            "position"  : [  0.0, 1.0, 2.0 ],
+            "velocity"  : [  0.0, 1.0, 2.0 ]
+        },
+
+        {
+            "time"      : "2020-05-15T11:30:05.000",
+            "position"  : [  0.01, 1.02, 2.03 ],
+            "velocity"  : [  0.01, 1.02, 2.03 ]
+        }
+    ] 
+}
+
+CCSDS-OEM
+
+The standard CCSDS OEM format. See CCSDSstandard for further details.
+
+CCSDS_OEM_VERS = 2.0
+CREATION_DATE = 2019-08-02T03:04:05.123456
+ORIGINATOR = LEOLABS
+
+META_START
+OBJECT_NAME = EXAMPLE SAT 1
+OBJECT_ID = L999999
+CENTER_NAME = EARTH
+REF_FRAME = EME2000
+TIME_SYSTEM = UTC
+START_TIME = 2019-03-18T00:00:00
+USEABLE_START_TIME = 2019-03-18T00:00:00
+USEABLE_STOP_TIME = 2019-03-19T00:00:00
+STOP_TIME = 2019-03-19T00:00:00Z
+INTERPOLATION = LAGRANGE
+INTERPOLATION_DEGREE = 7
+META_STOP
+
+2019-03-18T00:00:00 -1.898076e+06 -6.216728e+06 2.960030e+06 -2.023501e+03 -2.589406e+03 -6.711289e+03
+...
+
+COVARIANCE_START
+EPOCH = 2019-03-18T00:00:00
+COV_REF_FRAME = EME2000
+4.31661235e+03
+-1.47401855e+03 9.56942996e+02
+-4.66631183e+02 1.03895014e+03 2.00120455e+03
+1.20240463e+00 -7.73289709e-01 -8.91178565e-01 7.16431890e-04
+-7.22705016e-01 -6.29054148e-01 -1.82716096e+00 5.40286462e-04 2.06419602e-03
+-1.47749402e-01 4.69618107e-01 1.04863201e+00 -4.48718604e-04 -9.97646457e-04 6.06341102e-04
+...
+COVARIANCE_STOP
+
+
+Usage:
+Send GET to /api/orb_propagation/usage
+
+
+Example:
+
+Request: GET http://hostname/api/orb_propagation
+Body
+{
+    "msg_code_id"        : "orb_propagation",
+    "authentication_key" : "00998844",
+
+    "user_id"            : "xxx_yyy_1112",
+
+    "mission_id"         : "mis1",
+    "satellite_id"       : "sat1",
+
+    "add_to_database"    : "false",
+
+    "epoch_format"       : "UTCGregorian",
+
+    "start_time"         : "15 Jun 2020 12:00:00.000",
+    "stop_time"          : "16 Jun 2020 12:00:00.000",
+
+    "step_size"          : 30,
+
+    "initial_position"   : [  0.0, 1.0, 2.0 ],
+    "initial_velocity"   : [  0.0, 1.0, 2.0 ],
+
+    "input" : {
+        "orbital_parameters" : {
+            "date_time"      : "2020-06-15T11:30:00.000",
+            "eci_frame"      : "EME2000",
+            "keplerian"      : {
+                "sma"        : 123145,
+                "ecc"        : 0.123,
+                "inc"        : 0.123,
+                "raan"       : 0.123,
+                "aop"        : 0.123,
+                "ta"         : 1.234,
+                "pos_angle"  : "true, false"
+            }
+        },
+
+        "propagator_parameter"   : {
+            "force_model"   : {
+                "central_body"   : "Earth"
+            },
+    
+            "parameter1"    : "value1",
+            "parameter2"    : "value2"
+        }
+    },
+
+    "output" : {
+        "output_frame" : {
+            "reference_frame"  : "EarthMJ2000Eq",
+            "output_format"    : "CCSDS-OEM", 
+        }
+    }
+}
+
+Output:
+
+CCSDS_OEM_VERS = 1.0
+CREATION_DATE  = 2020-07-28T17:33:08
+ORIGINATOR     = GMAT USER
+
+META_START
+OBJECT_NAME          = SC_mis1_sat1
+OBJECT_ID            = sat1
+CENTER_NAME          = Earth
+REF_FRAME            = EME2000
+TIME_SYSTEM          = UTC
+START_TIME           = 2020-06-15T12:00:00.000
+USEABLE_START_TIME   = 2020-06-15T12:00:00.000
+USEABLE_STOP_TIME    = 2020-06-15T14:24:00.000
+STOP_TIME            = 2020-06-15T14:24:00.000
+INTERPOLATION        = Lagrange
+INTERPOLATION_DEGREE = 7 
+META_STOP
+
+2020-06-15T12:00:00.000   7.100000000000000e+03   0.000000000000000e+00   1.300000000000000e+03   0.000000000000000e+00   7.350000000000000e+00   1.000000000000000e+00
+2020-06-15T12:01:00.000   7.086464340502823e+03   4.407199483006634e+02   1.357476968346048e+03  -4.507091140198888e-01   7.336009303976716e+00   9.153521332657446e-01
+2020-06-15T12:03:08.777   6.966807734122242e+03   1.378844648584322e+03   1.463144252221835e+03  -1.403466089369499e+00   7.212752019900155e+00   7.236426884495003e-01
+2020-06-15T12:05:25.032   6.708835149021545e+03   2.345119229330543e+03   1.547242659390014e+03  -2.375559313674435e+00   6.948161263377198e+00   5.091239646094480e-01
+
+
+
+

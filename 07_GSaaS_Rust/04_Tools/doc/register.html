@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 6.0.7.3 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="2020-08-07T19:15:49.849241492"/>
+	<style type="text/css">
+		@page { margin: 2cm }
+		p { margin-bottom: 0.25cm; line-height: 115% }
+		pre.cjk { font-family: "Noto Sans Mono CJK SC", monospace }
+		a:link { so-language: zxx }
+	</style>
+</head>
+<body lang="en-GB" dir="ltr">
+<pre class="western"><font face="NanumSquare"><font size="4" style="font-size: 15pt"><b><span style="font-style: normal">FDS as a</span> Service, (c) Incomplete Worlds 2020</b></font></font>
+<font size="4" style="font-size: 15pt"><b>--------------------------------------------------</b></font>
+
+<font size="4" style="font-size: 15pt"><b>Register an user. This is required before using any API</b></font>
+
+<font size="4" style="font-size: 14pt">Send a JSON object to the address  <font color="#0d1f63"><i>http://hostname/api/register</i></font> using PUT HTTP method.</font>
+<font size="4" style="font-size: 14pt">The server will return the user's authentication key, which is required in all other API</font>
+
+<font size="4" style="font-size: 14pt">The fields of JSON object are:</font>
+
+<font size="4" style="font-size: 14pt">- <b>msg_code_id</b>. Value &quot;<font color="#0d1f63"><i><span style="font-weight: normal">register</span></i></font>&quot;. It shall be identical to the API name</font>
+<font size="4" style="font-size: 14pt">- <b>authentication_key</b>. Leave it empty</font>
+<font size="4" style="font-size: 14pt">- <b>user_id</b>. Leave it empty</font>
+<font size="4" style="font-size: 14pt">- <b>username</b>. Desired user name. Max length 16 characters. Spaces between letters are not allowed</font>
+  <font size="4" style="font-size: 14pt">Allowed characters; a-z, A-Z, 0-9, '-' (dash), '_' (underscore)</font>
+<font size="4" style="font-size: 14pt">- <b>password</b>. Desired password. password. Desired password. It must be hashed before sending the message.
+  Hash algorithm: SHA-256</font>
+  <font size="4" style="font-size: 14pt"></font>Minimum length 6 characters.</font>
+  <font size="4" style="font-size: 14pt">Allowed characters; a-z, A-Z, 0-9, special characters</font>
+<font size="4" style="font-size: 14pt">- <b>email</b>. Any valid email address</font>
+
+<font size="4" style="font-size: 14pt">On success, it will return a JSON object containing the user id and the authentication key to be used in next API calls.</font>
+<font size="4" style="font-size: 14pt">If it fails, it will return a JSON object describing the error.</font>
+
+<font size="4" style="font-size: 14pt"><b>Example:</b></font>
+<font size="4" style="font-size: 14pt">Request: <font color="#0d1f63"><i>PUT http://hostname/api/register</i></font></font>
+<font size="4" style="font-size: 14pt">Body</font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>{</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;msg_code_id&quot; :           &quot;register&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;authentication_key&quot; :    &quot;&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;user_id&quot; :               &quot;&quot;,</i></font></font>
+
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;username&quot; :              &quot;john_doe&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;password&quot; :              &quot;9Sec$reZATpwd0$&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;email&quot; :                 &quot;john_doe@someaddress.com&quot;,</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>}</i></font></font>
+
+<font size="4" style="font-size: 14pt">Response:</font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>{</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;user_id&quot; :               &quot;xxx_yyy_1112&quot;,</i></font></font>
+<font color="#0d1f63">    <font size="4" style="font-size: 14pt"><i>&quot;authentication_key&quot; :    &quot;AC04DEF034B3C2F6&quot;,</i></font></font>
+<font color="#0d1f63"><font size="4" style="font-size: 14pt"><i>}</i></font></font></pre>
+</body>
+</html>

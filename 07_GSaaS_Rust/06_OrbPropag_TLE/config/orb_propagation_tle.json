@@ -1,0 +1,11 @@
+
+{
+    "documentation":                "Incomplete Worlds (c) 2021. Orbit Propagation TLE configuration file",
+
+    "version":                      "1.0alfa",
+
+    "config_log_filename":                 "config/log4rs.yaml",
+
+    "orb_propagation_tle_http_address":    "127.0.0.1:9001"
+}
+

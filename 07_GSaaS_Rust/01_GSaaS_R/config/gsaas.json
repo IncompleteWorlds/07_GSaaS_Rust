@@ -1,0 +1,19 @@
+
+{
+    "documentation":                "Incomplete Worlds (c) 2021. GS as a Service configuration file",
+
+    "version":                      "1.0alfa",
+
+    "config_log_filename":          "config/log4rs.yaml",
+
+    "secret_key":                   "Zyw967%WdfX*X*aZ0$9q",
+
+    "gsaas_http_address":           "0.0.0.0:12005",
+    
+    "gsaas_nng_address":            "tcp://0.0.0.0:12006",
+    
+    "gsaas_int_address":            "inproc://main_controller",
+
+    "gsaas_nng_sub_address":        "tcp://127.0.0.1:11007"
+}
+

@@ -1,0 +1,11 @@
+
+{
+    "documentation":                "Incomplete Worlds (c) 2020. TM Decoder configuration file",
+
+    "version":                      "1.0alfa",
+
+    "config_log_filename":          "config/log4rs.yaml",
+
+    "nng_server_address":           "tcp://127.0.0.1:12006"
+}
+

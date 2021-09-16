@@ -1,0 +1,26 @@
+[package]
+name = "TM_Decoder"
+version = "0.1.0"
+authors = ["Alberto Fernandez Garcia (External) <ajfg70@wanadoo.fr>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build]
+target-dir = "~/Projects/07_GSaaS_Rust/target"         # path of where to place all generated artifacts
+
+[dependencies]
+log = "0.4.0"
+log4rs = "0.10.0"
+
+# Nanomsg
+nng = "1.0.0-rc.2"
+
+# Date & Time
+chrono="0.4"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
+serde_json = "1.0"
+serde_derive = "1.0"

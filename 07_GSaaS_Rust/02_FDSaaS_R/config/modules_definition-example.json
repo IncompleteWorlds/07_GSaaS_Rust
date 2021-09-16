@@ -1,0 +1,34 @@
+[
+    {
+        "name": "String - First definition",
+        "description": "String - Example of Module definition. It will be SKIPPED",
+        "module_type": "EnumModuleType; internal, external",
+        "binary_file": "String - binary file name",
+        "binary_file_path": "String - binary file path; absolute or relative",
+		"messages": [ 
+		    "List of messages this module can process"
+        ],
+        "input_variables": [
+            {
+                "name": "String",
+                "description": "String",
+                "default_value": "String - Default value for the variable, in case of it is not defined",
+                "value_type": "EnumVariableType; none, integer, unsigned integer, bool, float, double, string"
+            }
+        ],
+        "output_variables": [
+            {
+                "definition": {
+                    "name": "String",
+                    "description": "String",
+                    "default_value": "String - Default value for the variable, in case of it is not defined",
+                    "value_type": "EnumVariableType; none, integer, unsigned integer, bool, float, double, string"
+                },
+                "database": "String",
+                "db_table_name": "String",
+                "db_column_name": "String"
+            }
+        ]
+    }
+
+]

@@ -1,0 +1,41 @@
+{
+    "version" :             "1.0",
+    "msg_code_id" :         "orb_propagation_tle",
+    "msg_id":               "004",
+    "authentication_key" :  "",
+    "timestamp" :           0,
+
+    "mission_id" :          "mis1",
+    "satellite_id" :        "satellite_id_1",
+
+    "add_to_database" :     "false",
+
+    "epoch_format" :        "UTCGregorian",
+
+    "start_time" :          "2020-05-15T11:30:00.000",
+    "stop_time" :           "2020-05-16T11:30:00.000",
+
+    "step_size" :           5,
+
+    "initial_position" :    [  0.0, 1.0, 2.0 ],
+    "initial_velocity" :    [  0.0, 1.0, 2.0 ],
+
+    "input" : {
+        "orbital_data" : {
+            "tle" : {
+                "line1" :   "1 25682U 99020A   20153.55123203 -.00000529  00000-0 -10763-3 0  9993",
+                "line2" :   "2 25682  98.0820 216.6954 0000943  88.9800 271.1505 14.57169631123925"
+            }
+        }
+    },
+
+    "output" : {
+        "output_frame" : {
+            "reference_frame" : "EarthMJ2000Eq"
+        },
+
+        "interpolation_order" : 7,
+        "output_format" :       "CSV"
+    }
+
+}

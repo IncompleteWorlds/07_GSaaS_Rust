@@ -1,0 +1,61 @@
+2020-07-28 02:15:37,480 - [DEBUG] GMAT Script: 
+%
+% Incomplete Worlds (c) 2020
+%
+% Mustache template file for creating an Orbit Propagation Script
+% that can be executed by GMAT
+%
+% ==============================================
+%
+
+% ============================================================================
+% ---------- Spacecraft
+% ============================================================================
+%
+Create Spacecraft SC_mis1_sat1;
+
+SC_mis1_sat1.Id = sat1;
+
+% '02 Jun 2020 12:00:00.000'
+SC_mis1_sat1.Epoch.UTCGregorian = '15 Jun 2020 12:00:00.000';
+
+
+% ============================================================================
+% ---------- Propagators
+% ============================================================================
+%
+Create Propagator numProp_sat1;
+
+numProp_sat1.Type = PrinceDormand78;
+
+
+% ============================================================================
+% ---------- Create EphemerisFile anEphmerisFile
+% ============================================================================
+%
+Create EphemerisFile  anEphmerisFile;
+
+anEphmerisFile.Spacecraft = SC_mis1_sat1;
+% UTCGregorian UTCModJulian, TAIGregorian, TAIModJulian, TTGregorian, 
+% TTModJulian, A1Gregorian, A1ModJulian
+anEphmerisFile.EpochFormat = UTCGregorian;
+anEphmerisFile.InitialEpoch = '15 Jun 2020 12:00:00.000';
+anEphmerisFile.FinalEpoch = '16 Jun 2020 12:00:00.000';
+anEphmerisFile.CoordinateSystem = EarthMJ2000Eq;
+% CCSDS-OEM, STK-TimePosVel
+% JSON, CSV
+anEphmerisFile.FileFormat = CCSDS-OEM;
+anEphmerisFile.Filename = 'example_orb_propag.oem';
+
+
+
+% ============================================================================
+% ---------- MAIN
+% ============================================================================
+%
+BeginMissionSequence
+
+Propagate numProp_sat1(SC_mis1_sat1) { SC_mis1_sat1.ElapsedSecs = 8640 };
+
+
+

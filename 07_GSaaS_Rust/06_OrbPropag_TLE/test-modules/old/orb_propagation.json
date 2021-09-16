@@ -1,0 +1,57 @@
+{
+    "version"            :  "1.0",
+    "msg_code_id"        :  "orb_propagation",
+    "msg_id"             :  "005",
+    "authentication_key" :  "",
+    "timestamp" :           0,
+
+    "mission_id"         : "mis1",
+    "satellite_id"       : "sat1",
+
+    "add_to_database"    : "true, false",
+
+    "epoch_format"       : "UTCGregorian",
+
+    "start_time"         : "2020-05-15T11:30:00.000",
+    "stop_time"          : "2020-05-16T11:30:00.000",
+
+    "step_size"          : 30,
+
+    "initial_position"   : [  0.0, 1.0, 2.0 ],
+    "initial_velocity"   : [  0.0, 1.0, 2.0 ],
+
+    "input" : {
+        "orbital_parameters" : {
+            "date_time"      : "2020-06-15T11:30:00.000",
+            "eci_frame"      : "EME2000",
+            "keplerian"      : {
+                "sma"        : 123145,
+                "ecc"        : 0.123,
+                "inc"        : 0.123,
+                "raan"       : 0.123,
+                "aop"        : 0.123,
+                "ta"         : 1.234,
+                "pos_angle"  : "true, false"
+            }
+        },
+
+        "propagator_parameter"   : {
+            "force_model"   : {
+                "central_body"   : "Earth"
+            },
+    
+            "parameter1"    : "value1",
+            "parameter2"    : "value2"
+        }
+    },
+
+    "output" : {
+        "output_frame" : {
+            "reference_frame" : "EarthMJ2000Eq",
+            "file_format"     : "CCSDS-OEM", 
+            "output_file_name" : "example_orb_propag.oem",
+
+            "interpolation_order" : 7
+        }
+    }
+}

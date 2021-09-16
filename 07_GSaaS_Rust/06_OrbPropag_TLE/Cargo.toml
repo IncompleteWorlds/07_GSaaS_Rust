@@ -1,0 +1,56 @@
+[package]
+name = "Orbit_Propagation_TLE"
+version = "0.1.0"
+authors = ["Alberto Fernandez - Incomplete Worlds"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+common = { path = "../05_Common" }
+
+# Date & Time
+chrono = { version = "0.4", features = ["serde"] }
+
+log = "0.4.0"
+log4rs = "0.10.0"
+
+# JSON Web Toolkit
+jsonwebtoken = "7"
+
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
+serde_json = "1.0"
+serde_derive = "1.0"
+
+# HTTP Server
+# Actix
+actix-web = "3"
+# actix-rt = "2"
+# Required for serving static files
+actix-files = "0.3"
+actix-service = "1.0.5"
+futures = "0.3"
+mime="0.3"
+
+
+# UUID
+uuid = { version = "0.8", features = ["serde", "v4"] }
+
+# ORM, pool of connections
+diesel = { version = "1.4", features = ["chrono", "sqlite", "r2d2", "uuidv07", "serde_json"] }
+r2d2 = "0.8"
+r2d2-diesel = "1.0"
+
+# SHA 
+sha2 = "0.9"
+#hex-literal = "0.3"
+rand= "0.8"
+
+# Lazy static
+lazy_static="1.4"
+
+# SGP4
+sgp4 = "0.5"

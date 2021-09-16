@@ -1,0 +1,28 @@
+#
+# Incomplete Worlds (c) 2020
+#
+# Log4rs Log configuration file
+#
+
+refresh_rate: 30 seconds
+appenders:
+  stdout:
+    kind: console
+  requests:
+    kind: file
+    path: "log/tools.log"
+    encoder:
+      pattern: "{d} - {m}{n}"
+root:
+  level: debug
+  appenders:
+    - stdout
+    - requests
+loggers:
+  app::backend::db:
+    level: info
+  app::requests:
+    level: debug
+    appenders:
+      - requests
+    additive: false

@@ -1,0 +1,10 @@
+{   
+    "version" :               "1.0",
+    "msg_code_id" :           "login",
+    "authentication_key" :    "",
+    "msg_id" :                "002",
+    "timestamp" :             0,
+
+    "username_email" :        "user01",
+    "password" :              "aad415a73c4cef1ef94a5c00b2642b571a3e5494536328ad960db61889bd9368"
+}

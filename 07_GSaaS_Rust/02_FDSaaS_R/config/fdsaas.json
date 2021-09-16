@@ -1,0 +1,26 @@
+
+{
+    "documentation":                "Incomplete Worlds (c) 2020. FDS as a Service configuration file",
+
+    "version":                      "1.0alfa",
+
+    "config_log_filename":          "config/log4rs.yaml",
+
+    "modules_definition_file":      "config/modules_definition.json",
+
+    "secret_key":                   "Zyw967%WdfX*X*aZ0$9q",
+
+    "fdsaas_http_address":          "0.0.0.0:11005",
+
+    "modules_base_pull_address":    "tcp://127.0.0.1", 
+    "modules_base_pull_port":       "11100", 
+
+    "fds_int_address":              "inproc://main_controller",
+
+    "fds_nng_rep_address":          "tcp://127.0.0.1:11006",
+
+    "fds_nng_sub_address":          "tcp://127.0.0.1:11007",
+
+    "fds_nng_bus_address":          "tcp://127.0.0.1:11008"
+}
+

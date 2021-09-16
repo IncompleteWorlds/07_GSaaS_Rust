@@ -1,0 +1,12 @@
+{
+    "version" :               "1.0",
+    "msg_code_id" :           "create_mission",
+    "authentication_key" :    "XXXYYYZZZ",
+    "user_id" :               "0fc1c0e1-878a-4562-ba81-86e20b9b07ab",
+    "msg_id" :                "0001",
+    "timestamp" :             "2021-06-17T18:35:45",
+
+    "name" :                  "Satellite 1",
+    "description" :           "The first one",
+    "launch_date" :           "2005-11-30"
+}

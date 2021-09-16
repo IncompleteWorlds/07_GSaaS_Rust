@@ -1,0 +1,25 @@
+
+Example:
+Request: POST http://hostname/gsaas/login
+Body
+{
+    "version":             "1.0", 
+    "msg_code_id":         "login", 
+    "authentication_key":  "", 
+    "msg_id":              "001", 
+    "timestamp":           0, 
+
+    "username_email":      "user01", 
+    "password":            "aad415a73c4cef1ef94a5c00b2642b571a3e5494536328ad960db61889bd9368"
+}
+
+
+Response:
+{
+    "msg_id" :             "001",
+    "jwt_token" :          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmZHNhYXMiLCJzdWIiOiJEZW1vIiwiZXhwIjoxNjA5MTgxNTI0LCJpZCI6IjQ0NTIwYjEzLTVkYjktNGM4Ni1hNWFjLWVhNzI1MzNmOGFlZSJ9.I7JFn-eJTxu6MnmNVl7T_mQLBEV_Ca1d9eczCxdx3Bs",
+    "user_id" :            "a7e49ef0-1189-4fa8-a26e-bd54d51a6927",
+    "license" :            "Demo",
+    "error"   :            null
+}
+

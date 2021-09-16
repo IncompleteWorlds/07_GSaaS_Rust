@@ -1,0 +1,13 @@
+
+{
+    "documentation":                "Incomplete Worlds (c) 2020. FDS as a Service configuration file",
+
+    "module_name":                  "Orbit Propagation - GMAT",
+
+    "module_version":               "1.0alfa",
+
+    "config_log_filename":          "config/log4cpp.properties",
+
+    "template_path":                "templates"
+}
+

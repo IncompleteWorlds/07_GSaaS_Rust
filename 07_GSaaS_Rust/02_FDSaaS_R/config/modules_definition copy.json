@@ -1,0 +1,154 @@
+[
+    
+    {
+        "name": "orb_propagator",
+        "description": "Orbit Propagator",
+        "module_type": "EXTERNAL",
+        "binary_file": "orb_propagator.py",
+        "config_file":  "orb_propagator_config.json",
+        "binary_file_path": "modules",
+        "working_directory": "modules",
+		
+		"messages": [ 
+		    "orb_propagation"
+        ], 
+
+        "input_variables": [
+            {
+                "name": "start_time",
+                "description": "Start date and time of the orbit propagation. Format; yyyy-MM-ddThh:mi:ss.sss in UTC",
+                "default_value": "",
+                "value_type": "STRING"
+            },
+            {
+                "name": "stop_time",
+                "description": "Stop date and time of the orbit propagation. Format; yyyy-MM-ddThh:mi:ss.sss in UTC",
+                "default_value": "",
+                "value_type": "STRING"
+            },
+            {
+                "name": "reference_frame",
+                "description": "Reference frame",
+                "default_value": "ECI J2000",
+                "value_type": "DOUBLE"
+            },
+            {
+                "name": "position_x",
+                "description": "Initial position in meters. X axis",
+                "default_value": "",
+                "value_type": "DOUBLE"
+            },
+            {
+                "name": "position_y",
+                "description": "Initial position in meters. Y axis",
+                "default_value": "",
+                "value_type": "DOUBLE"
+            },
+            {
+                "name": "position_z",
+                "description": "Initial position in meters. Z axis",
+                "default_value": "",
+                "value_type": "DOUBLE"
+            },
+            {
+                "name": "velocity_x",
+                "description": "Initial velocity in meters / second. X axis",
+                "default_value": "",
+                "value_type": "DOUBLE"
+            },
+            {
+                "name": "velocity_y",
+                "description": "Initial velocity in meters / second. Y axis",
+                "default_value": "",
+                "value_type": "DOUBLE"
+            },
+            {
+                "name": "velocity_z",
+                "description": "Initial velocity in meters / second. Z axis",
+                "default_value": "",
+                "value_type": "DOUBLE"
+            }
+        ],
+
+
+        "output_variables": [
+            {
+                "definition": {
+                    "name": "time",
+                    "description": "Date and time of the ephemeris point. Format; yyyy-MM-ddThh:mi:ss.sss in UTC",
+                    "default_value": "",
+                    "value_type": "STRING"
+                },
+                "database": "",
+                "db_table_name": "",
+                "db_column_name": ""
+            },
+            {
+                "definition": {
+                    "name": "position_x",
+                    "description": "Initial position in meters. X axis",
+                    "default_value": "",
+                    "value_type": "DOUBLE"
+                },
+                "database": "",
+                "db_table_name": "",
+                "db_column_name": ""
+            },
+            {
+                "definition": {
+                    "name": "position_y",
+                    "description": "Initial position in meters. Y axis",
+                    "default_value": "",
+                    "value_type": "DOUBLE"
+                },
+                "database": "",
+                "db_table_name": "",
+                "db_column_name": ""
+            },
+            {
+                "definition": {
+                    "name": "position_z",
+                    "description": "Initial position in meters. Z axis",
+                    "default_value": "",
+                    "value_type": "DOUBLE"
+                },
+                "database": "",
+                "db_table_name": "",
+                "db_column_name": ""
+            },
+            {
+                "definition": {
+                    "name": "velocity_x",
+                    "description": "Initial velocity in meters / second. X axis",
+                    "default_value": "",
+                    "value_type": "DOUBLE"
+                },
+                "database": "",
+                "db_table_name": "",
+                "db_column_name": ""
+            },
+            {
+                "definition": {
+                    "name": "velocity_y",
+                    "description": "Initial velocity in meters / second. Y axis",
+                    "default_value": "",
+                    "value_type": "DOUBLE"
+                },
+                "database": "",
+                "db_table_name": "",
+                "db_column_name": ""
+            },
+            {
+                "definition": {
+                    "name": "velocity_z",
+                    "description": "Initial velocity in meters / second. Z axis",
+                    "default_value": "",
+                    "value_type": "DOUBLE"
+                },
+                "database": "",
+                "db_table_name": "",
+                "db_column_name": ""
+            }
+        ]
+    }
+]

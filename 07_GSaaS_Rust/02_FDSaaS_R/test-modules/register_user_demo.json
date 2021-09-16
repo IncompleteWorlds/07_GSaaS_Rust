@@ -1,0 +1,12 @@
+{   
+    "version" :               "1.0",
+    "msg_code_id" :           "register",
+    "authentication_key" :    "",
+    "msg_id" :                "2",
+    "timestamp" :             0,
+
+    "username" :              "user01",
+    "password" :              "user01",
+    "email" :                 "john_doe@someaddress.com",
+    "license" :               "Demo"
+}

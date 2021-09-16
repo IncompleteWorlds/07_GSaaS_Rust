@@ -1,0 +1,49 @@
+FDS as a Service, (c) Incomplete Worlds 2020
+----------------------------------------------------------------
+
+Register an user. This is required before using any API
+
+Send a JSON object to the address  http://hostname/api/register using PUT HTTP method.
+The server will return the user's authenticaion key, which is required in all other API
+
+The fields of JSON object are:
+
+- version. Fix value "1.0"
+- msg_code_id. Value "register". It shall be identical to the API name
+- authentication_key. Leave it empty
+- user_id. Leave it empty
+- msg_id. Unique identifier of the message. It will help to correlate the response with the answer
+- timestamp. Unix time, in seconds since 1/Jan/1970
+- username. Desired user name. Max length 16 characters. Spaces between letters are not allowed
+  Allowed characers; a-z, A-Z, 0-9, '-' (dash), '_' (underscore)
+- password. Desired password. It must be hashed before sending the message.
+  Hash algorithm: SHA-256
+  Minimum length 6 characers.
+  Allowed characers; a-z, A-Z, 0-9, special characers
+- email. Any valid email address
+
+On success, it wil return a JSON object containing the message id, the user id and the authentication key to be used in next API calls.
+If it fails, it will return a JSON object describing the error.
+
+Example:
+Request: PUT http://hostname/gsaas/register
+Body
+{
+    "version" :               "1.0",
+    "msg_code_id" :           "register",
+    "user_id" :               "",
+    "msg_id" :                "0001",
+    "timestamp" :             0,
+
+    "username" :              "john_doe",
+    "password" :              "9Sec$reZATpwd0$",
+    "email" :                 "john_doe@someaddress.com",
+    "license" :               "Demo"
+}
+
+Response:
+{
+    "msg_id" :                "0001",
+    "user_id" :               "0fc1c0e1-878a-4562-ba81-86e20b9b07ab",
+    "error" :                 null
+}

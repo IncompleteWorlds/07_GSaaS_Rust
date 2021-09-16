@@ -1,0 +1,1 @@
+{"rustc":17807758859236181817,"features":"","target":0,"profile":0,"path":0,"deps":[[1608971979850777219,"build_script_build",false,5223364731074538236]],"local":[{"RerunIfChanged":{"output":"debug/build/proc-macro2-6de34ec10819a031/output","paths":["build.rs"]}}],"rustflags":[],"metadata":0,"config":0,"compile_kind":0}
