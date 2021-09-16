@@ -470,14 +470,7 @@ async fn authorise_handler(in_msg: web::Json<RestRequest>,
     in_db_pool: web::Data<db::DbPool>,
     in_cfg: web::Data<ConfigVariables>) -> Result<HttpResponse, HttpServiceError>
 {
-
     debug!("authorise operation. Input msg: {}", in_msg.to_string());
-
-
-
-
-
-
 
     let new_conn = in_db_pool.get().unwrap();
 
