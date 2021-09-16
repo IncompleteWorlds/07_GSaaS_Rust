@@ -14,3 +14,13 @@ OpenFramesInterface
 Test
 test-server
 XtceProcessor-java-old
+07_GSaaS_Rust/01_GSaaS_R/log/gsaas.log
+07_GSaaS_Rust/01_GSaaS_R/target
+07_GSaaS_Rust/02_FDSaaS_R/log/fdsaas.log.0
+07_GSaaS_Rust/02_FDSaaS_R/log/fdsaas.log.1
+07_GSaaS_Rust/02_FDSaaS_R/target
+07_GSaaS_Rust/02_FDSaaS_R/fdsaas.pid
+07_GSaaS_Rust/04_Tools/log/tools.log
+07_GSaaS_Rust/04_Tools/target
+07_GSaaS_Rust/05_Common/target
+07_GSaaS_Rust/06_OrbPropag_TLE/target
