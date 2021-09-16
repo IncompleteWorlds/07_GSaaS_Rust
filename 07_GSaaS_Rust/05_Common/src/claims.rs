@@ -55,7 +55,7 @@ impl Claims {
         //     .map_err(|_err| String::from("ERROR: While generating Token") )
         
         encode(&Header::default(), &claims, &EncodingKey::from_secret( in_secret_key.as_bytes() ) )
-            .map_err(|_err| String::from("ERROR: While generating Token") )
+            .map_err(|_err| String::from("Error while generating Token") )
 
     }
 
@@ -82,7 +82,7 @@ impl Claims {
                 // }
                 Ok(decoded.claims)
             },
-            Err(_) => Err( String::from("ERROR: Invalid Token") ),
+            Err(_) => Err( String::from("Invalid Token") ),
         }
     }
 

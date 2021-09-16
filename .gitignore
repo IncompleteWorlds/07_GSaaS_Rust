@@ -24,3 +24,10 @@ XtceProcessor-java-old
 07_GSaaS_Rust/04_Tools/target
 07_GSaaS_Rust/05_Common/target
 07_GSaaS_Rust/06_OrbPropag_TLE/target
+test1
+.gitignore
+compile_eclipse.sh
+test1.cpp
+07_GSaaS_Rust/Github_token.txt
+07_GSaaS_Rust/alb.script
+.gitignore

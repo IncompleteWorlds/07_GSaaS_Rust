@@ -377,8 +377,8 @@ async fn logout_handler(in_msg: web::Json<RestRequest>,
 
     // Check authorization
     if let Err(e) = check_authorization(&new_conn, &in_msg.authentication_key,
-                                &in_cfg.secret_key) {
-        return Err( HttpServiceError::BadRequest(in_msg.msg_id.clone(), e.to_string()) );
+                                &in_cfg.secret_key, in_msg.msg_id.clone()) {
+        return Err(e);
     } 
 
 
@@ -443,8 +443,8 @@ async fn deregister_handler(in_msg: web::Json<RestRequest>,
 
     // Check authorization
     if let Err(e) = check_authorization(&new_conn, &in_msg.authentication_key,
-                                &in_cfg.secret_key) {
-        return Err( HttpServiceError::BadRequest(in_msg.msg_id.clone(), e.to_string()) );
+                                &in_cfg.secret_key, in_msg.msg_id.clone()) {
+        return Err(e);
     }
 
     let res = web::block(move || 
@@ -466,20 +466,31 @@ async fn deregister_handler(in_msg: web::Json<RestRequest>,
 /**
  * Check if the received token is valid
  */
-async fn authorise_hanlder(in_msg: web::Json<RestRequest>, 
+async fn authorise_handler(in_msg: web::Json<RestRequest>, 
     in_db_pool: web::Data<db::DbPool>,
     in_cfg: web::Data<ConfigVariables>) -> Result<HttpResponse, HttpServiceError>
 {
 
-// // Check authorization
-// if let Err(e) = check_authorization(&new_conn, &in_msg.authentication_key,
-//     &in_cfg.secret_key) {
-// return Err( HttpServiceError::BadRequest(in_msg.msg_id.clone(), e.to_string()) );
-// }
-//     check_authorization(conn: &SqliteConnection, in_key: &String, in_secret_key: &String)
+    debug!("authorise operation. Input msg: {}", in_msg.to_string());
 
-    Ok( HttpResponse::Ok().content_type("application/json")
-                              .json("") )
+
+
+
+
+
+
+    let new_conn = in_db_pool.get().unwrap();
+
+    //let tmp_msg_id = in_msg.msg_id.clone();
+
+    // Check authorization
+    if let Err(e) = check_authorization(&new_conn, &in_msg.authentication_key,
+                                &in_cfg.secret_key, in_msg.msg_id.clone()) {
+        return Err(e);
+    }
+
+    Ok( HttpResponse::Ok().finish() )
+     //.content_type("application/json").json("") )
 }
 
 
