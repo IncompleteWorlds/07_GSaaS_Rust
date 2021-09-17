@@ -1,6 +1,6 @@
 {
     "version" :             "1.0",
-    "msg_code_id" :         "exit",
+    "msg_code" :            "exit",
     "authentication_key" :  "00998844",
     "user_id" :             "none",
     "msg_id" :              "999",

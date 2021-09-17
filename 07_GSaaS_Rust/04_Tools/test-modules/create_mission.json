@@ -1,6 +1,6 @@
 {
     "version" :               "1.0",
-    "msg_code_id" :           "create_mission",
+    "msg_code" :              "create_mission",
     "authentication_key" :    "XXXYYYZZZ",
     "user_id" :               "0fc1c0e1-878a-4562-ba81-86e20b9b07ab",
     "msg_id" :                "0001",

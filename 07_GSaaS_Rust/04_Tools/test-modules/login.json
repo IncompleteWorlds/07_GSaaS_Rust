@@ -1,6 +1,6 @@
 {   
     "version" :               "1.0",
-    "msg_code_id" :           "login",
+    "msg_code" :              "login",
     "authentication_key" :    "",
     "msg_id" :                "002",
     "timestamp" :             0,
