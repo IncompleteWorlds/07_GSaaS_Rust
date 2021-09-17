@@ -1,0 +1,212 @@
+{
+  "version": 2,
+  "extra_config": {
+    "github_com/devopsfaith/krakend-botdetector": {
+      "cacheSize": 0
+    },
+    "github_com/devopsfaith/krakend-gologging": {
+      "level": "INFO",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true,
+      "format": "default"
+    }
+  },
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "no-op",
+  "name": "FDS as a Service",
+  "endpoints": [
+    {
+      "endpoint": "/fdsaas/exit",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "HS256"
+        }
+      },
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/fdsaas/exit",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "extra_config": {},
+          "host": [
+            "https://192.168.1.241",
+            "http://localhost"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/fdsaas/{version}/{operation}/usage",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "HS256"
+        }
+      },
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/fdsaas/{version}/{operation}/usage",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {},
+          "host": [
+            "https://192.168.1.241",
+            "http://localhost"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/fdsaas/version",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "HS256"
+        }
+      },
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/fdsaas/version/",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/fdsaas/status",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "HS256"
+        }
+      },
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/fdsaas/status",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {},
+          "host": [
+            "http://localhost"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/gsaas/login",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {},
+      "backend": [
+        {
+          "url_pattern": "/tools/login",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "extra_config": {},
+          "host": [
+            "http://localhost:9000"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/gsaas/logout",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "extra_config": {},
+      "backend": [
+        {
+          "url_pattern": "/tools/logout",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "extra_config": {},
+          "host": [
+            "http://localhost:9000"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+
+    {
+      "endpoint": "/gsaas/register",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "extra_config": {},
+      "backend": [
+        {
+          "url_pattern": "/tools/register",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "extra_config": {},
+          "host": [
+            "http://localhost:9000"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/gsaas/deregister",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "extra_config": {},
+      "backend": [
+        {
+          "url_pattern": "/tools/deregister",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "extra_config": {},
+          "host": [
+            "http://localhost:9000"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/gsaas/unregister",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "extra_config": {},
+      "backend": [
+        {
+          "url_pattern": "/tools/deregister",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "extra_config": {},
+          "host": [
+            "http://localhost:9000"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    }
+
+  ]
+}

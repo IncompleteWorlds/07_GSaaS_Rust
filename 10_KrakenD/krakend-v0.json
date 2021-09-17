@@ -1,0 +1,109 @@
+{
+  "version": 2,
+  "extra_config": {
+    "github_com/devopsfaith/krakend-botdetector": {
+      "cacheSize": 0
+    },
+    "github_com/devopsfaith/krakend-gologging": {
+      "level": "WARNING",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true,
+      "format": "default"
+    }
+  },
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "name": "FDS as a Service",
+  "endpoints": [
+    {
+      "endpoint": "/fdsaas/exit",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "HS256"
+        }
+      },
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/fdsaas/exit",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {},
+          "host": [
+            "https://192.168.1.241"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/fdsaas/v1/{operation}/usage",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "HS256"
+        }
+      },
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/fdsaas/v1/{operation}/usage",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {},
+          "host": [
+            "https://192.168.1.241"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/fdsaas/v1/version",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "HS256"
+        }
+      },
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/fdsaas/v1/version/",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {}
+        }
+      ]
+    },
+    {
+      "endpoint": "/fdsaas/status",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "HS256"
+        }
+      },
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/fdsaas/status",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "extra_config": {}
+        }
+      ]
+    }
+  ]
+}
