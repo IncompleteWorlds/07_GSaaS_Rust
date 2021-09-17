@@ -288,7 +288,7 @@ impl UserDb
         }
 
         // Check if the user already exists
-        let user_exist = UserDb::by_username(conn, &deregister_message.user_id);
+        let user_exist = UserDb::by_id(conn, &deregister_message.user_id);
         if user_exist.is_none() == true {
             let tmp_msg = format!("The user does not exist. Nothing is done");
 
@@ -335,7 +335,7 @@ impl UserDb
 
         // Check if the user is logged in (in the DB)
         // First by id
-        let tmp_user = UserDb::by_username(conn, &in_user.user_id);
+        let tmp_user = UserDb::by_id(conn, &in_user.user_id);
 
         if tmp_user.is_none() == true {
             return Err(HttpServiceError::BadRequest(in_json_message.msg_id.clone(), String::from("ERROR: User does not exist")));
