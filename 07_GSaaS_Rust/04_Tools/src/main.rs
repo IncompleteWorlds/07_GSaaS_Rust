@@ -121,46 +121,35 @@ lazy_static! {
  * Check the input parameters of the REST message
  * Return false - there are no errors
  */
-fn check_parameters(in_json_message: &RestRequest) -> Result<bool, RestResponse> {
+fn check_parameters(in_json_message: &RestRequest) -> Result<bool, HttpServiceError> 
+{
     // First item to be checked, so, we print the message_id later
     if in_json_message.msg_id.is_empty() == true {
         let tmp_msg = format!("ERROR: Message Id not found. IGNORED");
         error!("{}", tmp_msg.as_str());
 
-        let resp_json_message =
-            RestResponse::new_error_msg(String::from("error_response"), String::from("-1"), tmp_msg);
-
-        return Err(resp_json_message);
+        return Err( HttpServiceError::BadRequest(String::from("-1"), tmp_msg) );
     }
 
     if in_json_message.version.is_empty() == true {
         let tmp_msg = format!("ERROR: Version not found. IGNORED");
         error!("{}", tmp_msg.as_str());
 
-        let resp_json_message =
-            RestResponse::new_error_msg(String::from("error_response"), in_json_message.msg_id.clone(), tmp_msg);
-
-        return Err(resp_json_message);
+        return Err( HttpServiceError::BadRequest(in_json_message.msg_id.clone(), tmp_msg) );
     }
 
     if in_json_message.version != String::from(REST_JSON_VERSION) {
         let tmp_msg = format!("ERROR: Incorrect version number. IGNORED");
         error!("{}", tmp_msg.as_str());
 
-        let resp_json_message =
-            RestResponse::new_error_msg(String::from("error_response"), in_json_message.msg_id.clone(), tmp_msg);
-
-        return Err(resp_json_message);
+        return Err( HttpServiceError::BadRequest(in_json_message.msg_id.clone(), tmp_msg) );
     }
 
     if in_json_message.msg_code.is_empty() == true {
         let tmp_msg = format!("ERROR: Msg code not found. IGNORED");
         error!("{}", tmp_msg.as_str());
 
-        let resp_json_message =
-            RestResponse::new_error_msg(String::from("error_response"), in_json_message.msg_id.clone(), tmp_msg);
-
-        return Err(resp_json_message);
+        return Err( HttpServiceError::BadRequest(in_json_message.msg_id.clone(), tmp_msg) );
     }
 
     // authorization_key is not present in Register and Login messages
@@ -169,13 +158,7 @@ fn check_parameters(in_json_message: &RestRequest) -> Result<bool, RestResponse>
             let tmp_msg = format!("ERROR: Authentication key not found. IGNORED");
             error!("{}", tmp_msg.as_str());
 
-            let resp_json_message = RestResponse::new_error_msg(
-                String::from("error_response"),
-                in_json_message.msg_id.clone(),
-                tmp_msg,
-            );
-
-            return Err(resp_json_message);
+            return Err( HttpServiceError::BadRequest(in_json_message.msg_id.clone(), tmp_msg) );
         }
     }
 
@@ -183,13 +166,7 @@ fn check_parameters(in_json_message: &RestRequest) -> Result<bool, RestResponse>
         let tmp_msg = format!("ERROR: No Timestamp. IGNORED");
         error!("{}", tmp_msg.as_str());
 
-        let resp_json_message = RestResponse::new_error_msg(
-            String::from("error_response"),
-            in_json_message.msg_id.clone(),
-            tmp_msg
-        );
-
-        return Err(resp_json_message);
+        return Err( HttpServiceError::BadRequest(in_json_message.msg_id.clone(), tmp_msg) );
     }
 
     return Ok(false);
@@ -333,7 +310,7 @@ async fn login_handler(in_msg: web::Json<RestRequest>,
 
     // Check minimum set of fields
     if let Err(e) = check_parameters(&in_msg) {
-        return Err( HttpServiceError::BadRequest(in_msg.msg_id.clone(), e.to_string()) );
+        return Err(e);
     } 
 
     let new_conn = in_db_pool.get().unwrap();
@@ -369,7 +346,7 @@ async fn logout_handler(in_msg: web::Json<RestRequest>,
 
     // Check minimum set of fields
     if let Err(e) = check_parameters(&in_msg) {
-        return Err( HttpServiceError::BadRequest(in_msg.msg_id.clone(), e.to_string()) );
+        return Err(e);
     } 
 
     let new_conn = in_db_pool.get().unwrap();
@@ -405,7 +382,7 @@ async fn register_handler(in_msg: web::Json<RestRequest>,
 
     // Check minimum set of fields
     if let Err(e) = check_parameters(&in_msg) {
-        return Err( HttpServiceError::BadRequest(in_msg.msg_id.clone(), e.to_string()) );
+        return Err(e);
     } 
 
     let new_conn = in_db_pool.get().unwrap();
@@ -435,7 +412,7 @@ async fn deregister_handler(in_msg: web::Json<RestRequest>,
 
     // Check minimum set of fields
     if let Err(e) = check_parameters(&in_msg) {
-        return Err( HttpServiceError::BadRequest(in_msg.msg_id.clone(), e.to_string()) );
+        return Err(e);
     } 
 
     let new_conn = in_db_pool.get().unwrap();
