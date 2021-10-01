@@ -29,7 +29,9 @@ compile_eclipse.sh
 test1.cpp
 07_GSaaS_Rust/Github_token.txt
 07_GSaaS_Rust/alb.script
-.gitignore
 07_GSaaS_Rust/04_Tools/tools.pid
 07_GSaaS_Rust/04_Tools/data/tools.db
-
+07_GSaaS_Rust/04_Tools/tools.pid
+07_GSaaS_Rust/04_Tools/tools.pid
+07_GSaaS_Rust/04_Tools/tools.pid
+07_GSaaS_Rust/04_Tools/tools.pid

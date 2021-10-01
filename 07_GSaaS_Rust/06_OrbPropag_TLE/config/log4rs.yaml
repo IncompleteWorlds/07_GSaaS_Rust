@@ -10,7 +10,7 @@ appenders:
     kind: console
   requests:
     kind: file
-    path: "log/tools.log"
+    path: "log/orb_propagation_tle.log"
     encoder:
       pattern: "{d} - {m}{n}"
 root:

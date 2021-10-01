@@ -10,7 +10,6 @@
 */
 use std::result::Result;
 use std::{env, thread};
-use std::time::{Duration};
 use std::sync::{Arc, RwLock};
 use std::sync::mpsc;
 use std::fs;
@@ -24,15 +23,9 @@ use serde_json::{json, Value};
 
 // Log
 use log::{debug, error, info, trace, warn};
-// use log::{LevelFilter, SetLoggerError};
-// use log4rs::append::console::{ConsoleAppender, Target};
-// use log4rs::append::file::FileAppender;
-// use log4rs::config::{Appender, Config, Root};
-// use log4rs::encode::pattern::PatternEncoder;
-// use log4rs::filter::threshold::ThresholdFilter;
 
 // Date & Time
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, TimeZone, Duration};
 
 // Actix Web Server
 use actix_web::{web, App, HttpResponse, HttpServer, Responder, HttpRequest /*middleware*/};
@@ -57,17 +50,8 @@ mod config_tools;
 use config_tools::{config_log, read_config_json, ConfigVariables};
 
 mod api_messages;
-mod db;
-use db::*;
-use db::user::*;
-
-// use db::mission::*;
-// use db::satellite::*;
-// use db::ground_station::*;
-// use db::antenna::*;
-
-
-
+use api_messages::*;
+use sgp4::Prediction;
 
 
 
@@ -162,10 +146,92 @@ fn check_parameters(in_json_message: &RestRequest) -> Result<bool, HttpServiceEr
 }
 
 /**
+ * Check the specific parameters of this operation
+ * Return false - if there are no errors
+ */
+ fn check_operation_parameters(in_message: &OrbPropagationTleStruct, in_msg_id: String, 
+    out_start: &mut DateTime<Utc>, out_stop: &mut DateTime<Utc>,) -> Result<bool, HttpServiceError> 
+ {
+    // Check time format
+    if in_message.epoch_format != "UTCGregorian" &&
+       in_message.epoch_format != "UTCModJulian" {
+        let tmp_msg = format!("ERROR: Invalid epoch format: {}", in_message.epoch_format );
+            
+        error!("{}", tmp_msg.as_str() );
+        return Err(HttpServiceError::BadRequest(in_msg_id, tmp_msg));
+    }
+
+    // Check start and end time 
+    let rfc3339 = match DateTime::parse_from_rfc3339(in_message.start_time.as_str()) {
+        Ok(t) => t,
+        Err(e) => {
+            let tmp_msg = format!("ERROR: Unable to parse start time: {}", e.to_string());
+
+            error!("{}", tmp_msg.as_str() );
+            return Err(HttpServiceError::BadRequest(in_msg_id, tmp_msg));
+        },
+    };
+
+    // Convert to UTC
+    *out_start = rfc3339.with_timezone(&Utc);
+
+
+    let rfc3339 = match DateTime::parse_from_rfc3339(in_message.stop_time.as_str()) {
+        Ok(t) => t,
+        Err(e) => {
+            let tmp_msg = format!("ERROR: Unable to parse stop time: {}", e.to_string());
+
+            error!("{}", tmp_msg.as_str() );
+            return Err(HttpServiceError::BadRequest(in_msg_id, tmp_msg));
+        },
+    };
+
+    // Convert to UTC
+    *out_stop = rfc3339.with_timezone(&Utc);
+
+    // Check if the dates are in reverse order
+    if out_stop < out_start {
+        // Error
+        let tmp_msg = format!("ERROR: Stop time is in the past. Smaller thant the start time");
+
+        error!("{}", tmp_msg.as_str() );
+        return Err(HttpServiceError::BadRequest(in_msg_id, tmp_msg));
+    }
+
+    // Check if they are not separated for more than 1 year
+    let interval_duration = out_stop.signed_duration_since(*out_start);
+
+    if interval_duration > chrono::Duration::days(365) {
+        // Error to long
+        let tmp_msg = format!("ERROR: The propagation period is to big; greater than 1 year");
+
+        error!("{}", tmp_msg.as_str() );
+        return Err(HttpServiceError::BadRequest(in_msg_id, tmp_msg));
+    }
+
+    if in_message.output.reference_frame != "EarthMJ2000Eq" {
+        let tmp_msg = format!("ERROR: Invalid output reference frame: {}", in_message.output.reference_frame.as_str() );
+
+        error!("{}", tmp_msg.as_str() );
+        return Err(HttpServiceError::BadRequest(in_msg_id, tmp_msg));
+    }
+
+    if in_message.output.output_format != "json" && in_message.output.output_format != "JSON" &&
+    in_message.output.output_format != "ccsds-oem" && in_message.output.output_format != "CCSDS-OEM"    {
+        let tmp_msg = format!("ERROR: Invalid output ephemeris format: {}", in_message.output.output_format.as_str() );
+
+        error!("{}", tmp_msg.as_str() );
+        return Err(HttpServiceError::BadRequest(in_msg_id, tmp_msg));
+    }
+
+    Ok(false)
+}
+
+/**
  * Return index.html
  */
 // async fn index(req: HttpRequest) -> actix_web::Result<fs::NamedFile> {
-async fn index(in_request: HttpRequest, in_db: web::Data<db::DbPool>) -> actix_web::Result<actixfs::NamedFile>  { // -> impl Responder
+async fn index(in_request: HttpRequest) -> actix_web::Result<actixfs::NamedFile>  { // -> impl Responder
     debug!("   *** Index");
 
     // Record the HTTP access
@@ -194,7 +260,7 @@ async fn index(in_request: HttpRequest, in_db: web::Data<db::DbPool>) -> actix_w
     * Not Allowed Method handler
     * Record the access in the database
     */
-async fn not_allowed_method(in_payload: String, in_request: HttpRequest, in_db: web::Data<db::DbPool>) -> HttpResponse 
+async fn not_allowed_method(in_payload: String, in_request: HttpRequest) -> HttpResponse 
 {
     debug!("Not Allowed Method: {}", in_payload );
 
@@ -217,8 +283,9 @@ async fn api_usage(in_operation : web::Path<String>) -> HttpResponse
 
     match in_operation.as_str() {
 
-        "orb_propagation_tle" => {
-            usage_msg = fs::read_to_string("doc/orb_propagation_tle.html").expect("Unable to read 'doc/orb_propagation_tle.html' file");
+        "SGP4_SIMPLE" |
+        "orb_propagation_sgp4_simple" => {
+            usage_msg = fs::read_to_string("doc/orb_propagation_sgp4_simple.html").expect("Unable to read 'doc/orb_propagation_sgp4_simple.html' file");
         },
 
         _ => { 
@@ -266,8 +333,8 @@ async fn get_version() -> HttpResponse
  * Check the user and password (hash), and if correct generate a JWT token
  */
 async fn orb_propagation_tle(in_msg: web::Json<RestRequest>, 
-                       in_db_pool: web::Data<db::DbPool>,
-                       in_cfg: web::Data<ConfigVariables>) -> Result<HttpResponse, HttpServiceError>
+    in_api_version: web::Path<String>,
+    in_cfg: web::Data<ConfigVariables>) -> Result<HttpResponse, HttpServiceError>
 {
     debug!("Orbit Propagation - SGP4 - TLE Input msg: {}", in_msg.to_string());
 
@@ -276,59 +343,138 @@ async fn orb_propagation_tle(in_msg: web::Json<RestRequest>,
         return Err(e);
     } 
 
-    let elements = sgp4::Elements::from_tle(
-        Some("ISS (ZARYA)".to_owned()),
-        "1 25544U 98067A   20194.88612269 -.00002218  00000-0 -31515-4 0  9992".as_bytes(),
-        "2 25544  51.6461 221.2784 0001413  89.1723 280.4612 15.49507896236008".as_bytes(),
-    )?;
-    let constants = sgp4::Constants::from_elements(&elements)?;
+    if in_api_version != "v1" {
+        let tmp_msg = format!("ERROR: Incorrect API version: {}. Only v1 is supported", in_api_version);
+            
+        error!("{}", tmp_msg.as_str() );
+        return Err(HttpServiceError::BadRequest(in_msg.msg_id.clone(), tmp_msg));
+    }
+    
+    // Decode JSON
+    let json_message = serde_json::from_value( in_msg.parameters.clone() );
+    let orb_propagation_tle_message : OrbPropagationTleStruct = match json_message {
+        Ok(msg) => msg,  
+        Err(e) => {
+            let tmp_msg = format!("ERROR: Unable to decode JSON DeregisterStruct: {}", e.to_string());
+            
+            error!("{}", tmp_msg.as_str() );
+            return Err(HttpServiceError::InternalServerError(in_msg.msg_id.clone(), tmp_msg));
+        },
+    };
 
-    for hours in 0..24 {
-        println!("t = {} min", hours * 60);
-        let prediction = constants.propagate((hours * 60) as f64)?;
-        println!("    r = {:?} km", prediction.position);
-        println!("    ṙ = {:?} km.s⁻¹", prediction.velocity);
+    // Check the specific parameters of the operation
+    let mut tle_start_time: DateTime<Utc> = Utc::now();
+    let mut tle_stop_time: DateTime<Utc> = Utc::now();
+
+    if let Err(e) = check_operation_parameters(&orb_propagation_tle_message, in_msg.msg_id.clone(),
+        &mut tle_start_time, &mut tle_stop_time) {
+        return Err(e);
+    } 
+
+    debug!("Start time: {}  Stop time: {}", tle_start_time, tle_stop_time);
+
+    let elements = sgp4::Elements::from_tle(
+        orb_propagation_tle_message.input.tle.name.clone(),
+        orb_propagation_tle_message.input.tle.line1.as_bytes(),
+        orb_propagation_tle_message.input.tle.line2.as_bytes(),
+    ).map_err(|e| 
+        HttpServiceError::InternalServerError(in_msg.msg_id.clone(), e.to_string()) 
+    );
+
+    let elements = match elements {
+        Ok(el) => el,
+        Err(e) => return Err(e),
+    };
+
+
+    let constants = sgp4::Constants::from_elements(&elements)
+        .map_err(|e| 
+            HttpServiceError::InternalServerError(in_msg.msg_id.clone(), e.to_string())
+        );
+
+    let constants = match constants {
+        Ok(c) => c,
+        Err(e) => return Err(e),
+    };
+    
+    // Create output structure
+    let mut output_data : OrbPropagationTleResponseStruct = OrbPropagationTleResponseStruct { 
+        mission_id:       orb_propagation_tle_message.mission_id, 
+        satellite_id:     orb_propagation_tle_message.satellite_id, 
+        reference_frame:  orb_propagation_tle_message.output.reference_frame, 
+        epoch_format:     orb_propagation_tle_message.epoch_format,  
+        ephemeris:        Vec::new(),
+    };
+    
+    let mut satellite_state_vector : SatelliteStateVector = SatelliteStateVector 
+    {
+        time:             Utc::now().to_rfc3339(),
+        position:         [0.0, 0.0, 0.0],
+        velocity:         [0.0, 0.0, 0.0],
+    };
+    
+    // Propagate from start time to stop time
+    let start_in_min = tle_start_time.timestamp() as f64 / 60.0 as f64;
+    let stop_in_min = tle_stop_time.timestamp() as f64 / 60.0 as f64;
+
+    println!(" start time: {}   stop time: {}", start_in_min, stop_in_min);
+
+    let mut i = start_in_min;
+    while i < stop_in_min {
+        
+        // Number of minutes since epoch
+        let prediction = constants.propagate(i)
+            .map_err(|e| 
+                HttpServiceError::InternalServerError(in_msg.msg_id.clone(), e.to_string())
+            );
+    
+        if let Err(e) = prediction  {
+            return Err(e);
+        }
+
+        let prediction = prediction.unwrap();
+
+        let tmp_timestamp = DateTime::<Utc>::from_utc(chrono::NaiveDateTime::from_timestamp((i as i64) * 60, 0), Utc );
+        
+        satellite_state_vector.time = tmp_timestamp.to_rfc3339();
+        
+        satellite_state_vector.position[0] = prediction.position[0];
+        satellite_state_vector.position[1] = prediction.position[1];
+        satellite_state_vector.position[2] = prediction.position[2];
+        
+        satellite_state_vector.velocity[0] = prediction.velocity[0];
+        satellite_state_vector.velocity[1] = prediction.velocity[1];
+        satellite_state_vector.velocity[2] = prediction.velocity[2];
+
+        // Add current ephemeris to the output list
+        output_data.ephemeris.push(satellite_state_vector.clone());
+        
+        debug!("t = {} min", i);
+        debug!("    r = {:?} km", prediction.position);
+        debug!("    ṙ = {:?} km.s⁻¹", prediction.velocity);
+
+// TODO: Use requested step
+
+        // Next minute
+        i += 1.0;
     }
 
-    Ok( HttpResponse::Ok().content_type("application/json")
-                          .json("{ 'test':'test'}") )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // let new_conn = in_db_pool.get().unwrap();
-    // let tmp_msg_id = in_msg.msg_id.clone();
-
-    // let res = web::block(move || 
-    //     UserDb::login(&new_conn, &in_msg, &in_cfg.secret_key)
-    // ).await;
+    match orb_propagation_tle_message.output.output_format.as_str() {
+        "json" | "JSON" => {
+        },
+        "ccsds-oem" | "CCSDS-OEM" => {
+            
+        },
+        _ => {
+            
+        }
+    }; 
     
-    // match res {
-    //     Ok(u) => {
-    //         Ok( HttpResponse::Ok().content_type("application/json")
-    //                           .json(u) )
-    //     },
+    let output = RestResponse::new_value(String::from("orb_propagation_sgp4_simple_response"), in_msg.msg_id.clone(), 
+    json!(output_data));
 
-    //     Err(err) => match err {
-    //         BlockingError::Error(service_error) => Err(service_error),
-    //         BlockingError::Canceled => Err(HttpServiceError::InternalServerError(tmp_msg_id, String::from("Cancelled operation")) ),
-    //     },
-    // }    
+    Ok( HttpResponse::Ok().content_type("application/json")
+                          .json(output) )
 }
 
 /**
@@ -378,7 +524,7 @@ async fn main() -> std::io::Result<()>
 
     // Write the PID to a file
     let data = format!("{}", process::id());
-    fs::write("tools.pid", data).expect("Unable to write 'tools.pid' file");
+    fs::write("orb_tle_propagation.pid", data).expect("Unable to write 'tools.pid' file");
 
 
     let now:  DateTime<Utc> = Utc::now(); 
@@ -428,19 +574,11 @@ async fn main() -> std::io::Result<()>
     info!("Listening HTTP IP Address: {}", http_address);
 
 
-    //let db_addr = SyncArbiter::start(num_cpus::get(), move || DatabaseExecutor(pool.clone()));
-    // Copy to be transfered to HTTP server
-    //let conn_pool_copy = conn_pool.clone();
-    let conn_pool_copy = establish_connection();
-
     // Data shared between all threads
     {
         let mut tmp_data = GLOBAL_DATA.write().unwrap();
 
         tmp_data.service_status    = EnumStatus::RUNNING;
-        // tmp_data.nng_ip_address  = config_variables.fds_int_address.clone();
-        //tmp_data.db_pool         = conn_pool;
-        //conn_pool_copy             = tmp_data.db_pool.clone();
     }
 
     debug!("Creating global data");
@@ -454,16 +592,13 @@ async fn main() -> std::io::Result<()>
         // limit the maximum amount of data that server will accept
         .data(web::JsonConfig::default().limit( common::common::MAX_SIZE_JSON ))
 
-        // Pass data to the handler. It makes a copy
-        .data( conn_pool_copy.clone() )
-
         .data( config_variables.clone() )
 
         // Stopping the server
         .data( tx.clone() )
 
         .service(
-            web::scope("/fds")
+            web::scope("/fdsaas")
                 .default_service(
                     web::route().to(not_allowed_method),
                 )
@@ -477,7 +612,8 @@ async fn main() -> std::io::Result<()>
 
 
                 // MODULE SPECIFIC
-                .route("/{version}/orb_propagation_tle", web::get().to(orb_propagation_tle))
+                .route("/{version}/orb_propagation_sgp4_simple", web::get().to(orb_propagation_tle))
+                .route("/{version}/OP/SGP4_SIMPLE", web::get().to(orb_propagation_tle))
         )
         
         // Root URL

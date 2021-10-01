@@ -6,12 +6,11 @@
   
  GS as a Service
 
- This script tests the User Management API
- * Register
- * Unregister
+ This script tests the Orbit Propagation using SGP4 / TLE
  * Login
+ * Orbit Propagation TLE correct data
+ * Orbit Propagation TLE incorrect data
  * Logout
- * Exit 
 
  NOTE: They are executed in alphabetic order. So, they have a number before
  the name to ensure the order
@@ -30,20 +29,17 @@ import sqlite3
 
 unittest.TestLoader.sortTestMethodsUsing = None
 
-API_SERVER_IP="http://127.0.0.1:9000/"
+API_SERVER_IP="http://127.0.0.1:9002/"
+LOGIN_SERVER_IP="http://127.0.0.1:9000/"
 user_id = ""
 authentication_key = ""
 
-class TestUser(unittest.TestCase):
+class TestOrbPropagationTle(unittest.TestCase):
     # This setup is executed only one time
     @classmethod
     def setUpClass(cls):
-        # Remove previuos user
-        conn = sqlite3.connect('../data/tools.db')
-        conn.execute("DELETE FROM t_user WHERE username = 'user01'")
-        conn.commit()
-        conn.close()
-
+        pass
+        
         # cls.draft_register(cls)
 
 
@@ -52,7 +48,7 @@ class TestUser(unittest.TestCase):
 
     #     print("Setup: Register user .....")
 
-    #     api_url = API_SERVER_IP + "tools/register"
+    #     api_url = LOGIN_SERVER_IP + "tools/register"
 
     #     with open('register_user_demo.json') as f:
     #         in_json = json.load(f)
@@ -64,27 +60,27 @@ class TestUser(unittest.TestCase):
 
     #     if resp.status_code != 200:
     #         print("Error registering user")
-    #         return
+    #         print(resp.text)
+    #         # self.assertFalse(True)
+    #         return False
 
-    #     # print(resp.text)
-    #     resp_json = json.loads( resp.text )
-
-    #     value = resp_json.get('error')
-    #     if value:
-    #         print(value)
-        
     #     else:
-    #         # res1 = json.loads( resp_json["response"])
-    #         user_id = resp_json["user_id"]
-    #         print("user id = ", user_id)
+    #         resp_json = json.loads( resp.text )
+    #         print(resp_json)
+
+    #         # user_id = resp_json["user_id"]
+    #         # print("user id = ", user_id)
     #         print("   Ok")
 
 
-    def test_2login(self):
+
+
+
+    def test_1login(self):
         global user_id, authentication_key
 
         print("Test Login  ......")
-        api_url = API_SERVER_IP + "tools/login"
+        api_url = LOGIN_SERVER_IP + "tools/login"
         
         with open('login.json') as f:
             in_json = json.load(f)
@@ -110,15 +106,13 @@ class TestUser(unittest.TestCase):
                             headers={"content-type": "application/json"},
                             json=in_json)
        
-        self.assertEqual(resp.status_code, 200)
-
-        resp_json = json.loads( resp.text )
-
-        value = resp_json.get('detail')
-        if value:
-            print(value)
+        if resp.status_code != 200:
+            print(resp.text)
             self.assertFalse(True)
+
         else:
+            resp_json = json.loads( resp.text )
+
             print("user id   = ", resp_json["user_id"])
             print("jwt token = ", resp_json["jwt_token"])
             authentication_key = resp_json["jwt_token"]
@@ -127,13 +121,74 @@ class TestUser(unittest.TestCase):
             print("   Ok")
 
 
-    def test_3logout(self):
+# ************************************************************************************
+#              END OF TEST CASES
+# ************************************************************************************
+
+
+
+    def test_2orb_propagation_tle_correct(self):
+        global user_id, authentication_key
+
+        if authentication_key == None or authentication_key == "":
+            print("User is not logged in. Abort")
+            self.assertFalse(True)
+            return
+
+        print("Test Orbit Propagation TLE correct data .....")
+        print("")
+
+        api_url = API_SERVER_IP + "fdsaas/v1/orb_propagation_tle"
+
+        with open('orb_propagation_tle.json') as f:
+            in_json = json.load(f)
+
+
+        # Getting the current date and time 
+        dt = datetime.datetime.now() 
+        
+        utc_time = dt.replace(tzinfo = timezone.utc) 
+        utc_timestamp = utc_time.timestamp() 
+        
+        # print( int(utc_timestamp) )
+
+        in_json["timestamp"] = int(utc_timestamp)
+        in_json["authentication_key"] = authentication_key
+        in_json["user_id"] = user_id 
+
+
+        # print( json.dumps(in_json, indent = 4) )
+        resp = requests.get(api_url,
+                            headers={"content-type": "application/json"},
+                            json=in_json)
+
+        if resp.status_code != 200:
+            print("Error propagating orbit")
+            print(resp.text)
+            self.assertFalse(True)
+
+        else:
+            resp_json = json.loads( resp.text )
+            # print(resp_json)
+            print( json.dumps(resp_json, indent = 4) )
+
+            print("   Ok")
+
+
+
+
+# ************************************************************************************
+#              END OF TEST CASES
+# ************************************************************************************
+
+    def test_99logout(self):
         global user_id, authentication_key
         
         print("Test Logout  ......")
-        api_url = API_SERVER_IP + "tools/logout"
+        api_url = LOGIN_SERVER_IP + "tools/logout"
 
         if authentication_key == None or authentication_key == "":
+            self.assertFalse(True)
             print("Authentication key is empty. Abort")
             return
 
@@ -156,80 +211,14 @@ class TestUser(unittest.TestCase):
         resp = requests.delete(api_url,
                             headers={"content-type": "application/json"},
                             json=in_json)
-        print(resp.text)
-        resp_json = json.loads( resp.text )
-
-        self.assertEqual(resp.status_code, 200)
-        print("   Ok")
-
-
-
-
-    def test_1register(self):
-        global user_id, authentication_key
-
-        print("Test Register user .....")
-
-        api_url = API_SERVER_IP + "tools/register"
-
-        with open('register_user_demo.json') as f:
-            in_json = json.load(f)
-
-        # print( json.dumps(in_json, indent = 4) )
-        resp = requests.put(api_url,
-                            headers={"content-type": "application/json"},
-                            json=in_json)
 
         if resp.status_code != 200:
-            print("Error registering user")
-            return
+            print(resp.text)
+            self.assertFalse(True)
 
-        # print(resp.text)
-        resp_json = json.loads( resp.text )
-
-        value = resp_json.get('detail')
-        if value:
-            print(value)
-        
         else:
-            # res1 = json.loads( resp_json["response"])
-            user_id = resp_json["user_id"]
-            print("user id = ", user_id)
+            resp_json = json.loads( resp.text )
             print("   Ok")
-
-
-
-    def test_4deregister(self):
-        global user_id, authentication_key
-
-        print("Test Deregister user .....")
-
-        api_url = API_SERVER_IP + "tools/deregister"
-
-        with open('deregister_user_demo.json') as f:
-            in_json = json.load(f)
-
-        # Getting the current date and time 
-        dt = datetime.datetime.now() 
-        
-        utc_time = dt.replace(tzinfo = timezone.utc) 
-        utc_timestamp = utc_time.timestamp() 
-        
-        print( int(utc_timestamp) )
-
-        in_json["timestamp"] = int(utc_timestamp)
-        in_json["authentication_key"] = authentication_key
-        in_json["user_id"] = user_id 
-
-        # print( json.dumps(in_json, indent = 4) )
-        resp = requests.delete(api_url,
-                               headers={"content-type": "application/json"},
-                               json=in_json)
-
-        print(resp.text)
-        
-        self.assertEqual(resp.status_code, 200)
-        print("   Ok")
 
 
 

@@ -26,7 +26,7 @@ import sqlite3
 
 unittest.TestLoader.sortTestMethodsUsing = None
 
-API_SERVER_IP="http://127.0.0.1:9000/"
+API_SERVER_IP="http://127.0.0.1:9002/"
 user_id = ""
 authentication_key = ""
 
@@ -55,7 +55,7 @@ authentication_key = ""
 class TestGeneral(unittest.TestCase):
     def test_version(self):
         print("Test Version  ......")
-        api_url = API_SERVER_IP + "tools/version"
+        api_url = API_SERVER_IP + "fdsaas/version"
         
         resp = requests.get(api_url,
                             headers={"content-type": "application/json"},
@@ -70,7 +70,7 @@ class TestGeneral(unittest.TestCase):
 
     def test_status(self):
         print("Test Status  ......")
-        api_url = API_SERVER_IP + "tools/status"
+        api_url = API_SERVER_IP + "fdsaas/status"
         
         resp = requests.get(api_url,
                             headers={"content-type": "application/json"},
@@ -86,7 +86,7 @@ class TestGeneral(unittest.TestCase):
 
     def test_zexit(self):
         print("Test Exit  ......")
-        api_url = API_SERVER_IP + "tools/exit/XYZZY"
+        api_url = API_SERVER_IP + "fdsaas/exit/XYZZY"
         
         resp = requests.post(api_url,
                             headers={"content-type": "application/json"},

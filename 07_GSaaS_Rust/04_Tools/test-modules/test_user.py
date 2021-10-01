@@ -110,21 +110,20 @@ class TestUser(unittest.TestCase):
                             headers={"content-type": "application/json"},
                             json=in_json)
        
-        self.assertEqual(resp.status_code, 200)
-
-        resp_json = json.loads( resp.text )
-
-        value = resp_json.get('detail')
-        if value:
-            print(value)
+        if resp.status_code != 200:
+            print(resp.text)
             self.assertFalse(True)
+
         else:
+            resp_json = json.loads( resp.text )
+
             print("user id   = ", resp_json["user_id"])
             print("jwt token = ", resp_json["jwt_token"])
             authentication_key = resp_json["jwt_token"]
             user_id = resp_json["user_id"]
 
             print("   Ok")
+
 
 
     def test_3logout(self):
@@ -156,11 +155,15 @@ class TestUser(unittest.TestCase):
         resp = requests.delete(api_url,
                             headers={"content-type": "application/json"},
                             json=in_json)
-        print(resp.text)
-        resp_json = json.loads( resp.text )
+        
+        if resp.status_code != 200:
+            print(resp.text)
+            self.assertFalse(True)
 
-        self.assertEqual(resp.status_code, 200)
-        print("   Ok")
+        else:
+            resp_json = json.loads( resp.text )
+            print("   Ok")
+        
 
 
 
@@ -182,16 +185,12 @@ class TestUser(unittest.TestCase):
 
         if resp.status_code != 200:
             print("Error registering user")
-            return
+            print(resp.text)
+            self.assertFalse(True)
 
-        # print(resp.text)
-        resp_json = json.loads( resp.text )
-
-        value = resp_json.get('detail')
-        if value:
-            print(value)
-        
         else:
+            resp_json = json.loads( resp.text )
+    
             # res1 = json.loads( resp_json["response"])
             user_id = resp_json["user_id"]
             print("user id = ", user_id)
@@ -226,10 +225,14 @@ class TestUser(unittest.TestCase):
                                headers={"content-type": "application/json"},
                                json=in_json)
 
-        print(resp.text)
-        
-        self.assertEqual(resp.status_code, 200)
-        print("   Ok")
+        if resp.status_code != 200:
+            print("Error deregistering user")
+            print(resp.text)
+            self.assertFalse(True)
+
+        else:
+            print(resp.text)
+            print("   Ok")
 
 
 

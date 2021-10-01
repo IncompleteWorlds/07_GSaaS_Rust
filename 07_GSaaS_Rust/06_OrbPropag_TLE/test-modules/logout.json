@@ -1,6 +1,6 @@
 {   
     "version" :               "1.0",
-    "msg_code_id" :           "logout",
+    "msg_code" :              "logout",
     "authentication_key" :    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmZHNhYXMiLCJzdWIiOiJEZW1vIiwiZXhwIjoxNjI2NTY0NTQ5LCJpZCI6IjdjNjI3N2E4LWYyNDctNGFjMy04MDJiLTJjNGIwZDdlNjc5MCJ9.4rVfvoWWjZGE7zzcxkaQUwj3BHkISKzqaowiIr6kVrQ",
     "msg_id" :                "003",
     "timestamp" :             0,

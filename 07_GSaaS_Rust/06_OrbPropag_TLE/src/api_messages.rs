@@ -7,6 +7,7 @@
  */
 // use std::result::Result;
 
+use chrono::NaiveDateTime;
 // Serialize/Deserialize; YAML, JSON
 use serde::{Deserialize, Serialize};
 // use serde_json;
@@ -14,185 +15,93 @@ use serde::{Deserialize, Serialize};
 //use std::collections::HashMap;
 
 
-
 // =======================================================
-// Users
+// Orbit Propagation using SGP4 / TLE
 // =======================================================
 
 /**
- * This is a special message. Message for registering a new user
- * It will return the new user id and his authentication key
+ * Propagate a satellite orbit using the SGP4 / TLE propagator
  */
-#[derive(Serialize, Deserialize, Debug)]
-pub struct RegisterStruct {
-    pub username:   String,
-    // Password shall be already hashed with SHA-256
-    pub password:   String,
-    pub email:      String,
-}
+ #[derive(Serialize, Deserialize, Debug)]
+ pub struct OrbPropagationTleStruct {
  
-/**
- * Response to Register message
- */
-#[derive(Serialize, Deserialize, Debug)]
-pub struct RegisterResponseStruct {
-    pub user_id:    String,
-}
+     pub mission_id:            String,
+     pub satellite_id:          String,
  
-#[derive(Serialize, Deserialize, Debug)]
-pub struct LoginStruct {
-    pub username_email:   String,
-    pub password:         String,
-}
+     pub add_to_database:       bool,
  
-#[derive(Serialize, Deserialize, Debug)]
-pub struct LoginResponseStruct {
-    pub user_id:          String,
-    pub jwt_token:        String,
-    pub license:          String,
-}
+     pub epoch_format:          String,
  
-// Logout
-#[derive(Serialize, Deserialize, Debug)]
-pub struct LogoutStruct {
-    pub user_id:          String,
-}
+     // 2020-05-15T11:30:00.000"
+     pub start_time:            String,
+     pub stop_time:             String,
  
-// Logout response
-// None
-
-// De-register
-#[derive(Serialize, Deserialize, Debug)]
-pub struct DeregisterStruct {
-    pub user_id:          String,
-}
+     pub step_size:             u16,
  
-// De-register response
-// None
+     pub initial_position:      [f64; 3],
+     pub initial_velocity:      [f64; 3],
  
+     pub input:                 InputTleStruct,
+     
+     pub output:                OutputTleStruct,    
+ }
  
-// =======================================================
-// Missions
-// =======================================================
+ /**
+  * List of satellite ephemeris
+  */
+ #[derive(Serialize, Deserialize, Debug)]
+ pub struct OrbPropagationTleResponseStruct {
+   
+     pub mission_id:          String,
+     pub satellite_id:        String,
  
-// Create Mission
+     pub reference_frame:     String,
+     pub epoch_format:        String,
+     
+     pub ephemeris:           Vec<SatelliteStateVector>,
+ }
+
+
+
+// #[derive(Serialize, Deserialize, Debug)]
+// pub struct Vector3Struct {
+//     pub x:       f64,
+//     pub y:       f64,
+//     pub z:       f64,
+// }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct CreateMissionStruct {
-    pub name:            String,
-    pub description:     String,
-    // Format:  YYYY-MM-DDTHH:MM:SS
-    pub launch_date:     String, 
+pub struct InputTleStruct {
+    pub tle: TleStruct,
+    // TODO
+   // pub OMM: OmmStruct,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct CreateMissionReponseStruct {
-    pub mission_id:      String,
-}
-
-// Get Mission(s)
-#[derive(Serialize, Deserialize, Debug)]
-pub struct GetMissionStruct {
-    pub mission_id:      String,
-}
-
-// Delete Mission
-#[derive(Serialize, Deserialize, Debug)]
-pub struct DeleteMissionStruct {
-    pub mission_id:      String,
-}
-
-// Response
-// None
-
-// 
- 
-// =======================================================
-// Satellites
-// =======================================================
- 
-// Create
-#[derive(Serialize, Deserialize, Debug)]
-pub struct CreateSatelliteStruct {
-    pub mission_id:      String,
-    pub name:            String,
-    pub description:     String,
-    // Format:  YYYY-MM-DDTHH:MM:SS
-    pub launch_date:     String, 
+pub struct TleStruct {
+    pub name:    Option<String>,
+    pub line1:   String,
+    pub line2:   String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct CreateSatelliteReponseStruct {
-    pub satellite_id:    String,
-}
-
-
-// Read
-#[derive(Serialize, Deserialize, Debug)]
-pub struct GetSatelliteStruct {
-    pub satellite_id:      String,
-}
-
-// Update
-
-
-// Delete
-#[derive(Serialize, Deserialize, Debug)]
-pub struct DeleteSatelliteStruct {
-    pub satellite_id:      String,
-}
-
-// Find by id
-// Find by name
- 
-// =======================================================
-// Ground Stations
-// =======================================================
- 
-// Create
-#[derive(Serialize, Deserialize, Debug)]
-pub struct CreateGroundStationStruct {    
-    pub name:           String,
-    pub owner:          String,
+pub struct OmmStruct {
+    pub object_name:   String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct CreateGroundStationResponseStruct {    
-    pub ground_station_id:     String,
+pub struct OutputTleStruct {
+
+    pub reference_frame:      String,
+    pub interpolation_order:  u16,
+    pub output_format:        String,
 }
 
-// Read
-// Update
-// Delete
- 
-// Find by id
-// Find by name
- 
-
-// =======================================================
-// Antennas
-// =======================================================
-
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct CreateAntennaStruct {    
-    pub name:           String,
-    pub station_id:     String,
-    // WGS84 degrees
-    pub latitude:       f64,
-    // WGS84 degrees
-    pub longitude:      f64,
-    // Meters
-    pub altitude:       f64,
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct SatelliteStateVector {
+    pub time:                  String,
+    pub position:              [f64; 3],
+    pub velocity:              [f64; 3],
 }
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct CreateAntennaResponseStruct {    
-    pub antenna_id:     String,
-}
-
-// Add Elevation Mask to the stations
-// Read Elevation Mask to the stations
-// Delete Elevation Mask to the stations
 
 

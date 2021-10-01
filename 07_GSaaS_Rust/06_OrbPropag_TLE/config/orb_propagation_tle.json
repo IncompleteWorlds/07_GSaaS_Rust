@@ -6,6 +6,6 @@
 
     "config_log_filename":                 "config/log4rs.yaml",
 
-    "orb_propagation_tle_http_address":    "127.0.0.1:9001"
+    "orb_propagation_tle_http_address":    "127.0.0.1:9002"
 }
 
